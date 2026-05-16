@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { background: #0B0A08; color: #F4EDE0; font-family: 'Archivo', system-ui, sans-serif; margin: 0; }
+.label-tag { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: #9C9486; }
