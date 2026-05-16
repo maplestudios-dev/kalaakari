@@ -1,0 +1,59 @@
+# ─── Dependencies ─────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+.yarn/cache
+.yarn/install-state.gz
+
+# ─── Build output ─────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.svelte-kit/
+.vite/
+.turbo/
+*.tsbuildinfo
+
+# ─── Environment / secrets — NEVER COMMIT ─────────────────────
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
+!.env.example          # template IS committed
+# explicit per-app guards (belt + braces)
+apps/api/.env
+apps/web/.env
+apps/admin/.env
+
+# ─── Logs ─────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ─── Editors / OS ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+!.vscode/extensions.json   # share recommended extensions only
+
+# ─── Test / coverage ──────────────────────────────────────────
+coverage/
+.nyc_output/
+*.lcov
+
+# ─── Misc ─────────────────────────────────────────────────────
+.cache/
+tmp/
+temp/
+.env.vault
+.vercel/
+.netlify/
+.firebase/

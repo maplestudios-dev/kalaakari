@@ -1,0 +1,20 @@
+{
+  "name": "kalaakaari",
+  "private": true,
+  "version": "0.1.0",
+  "description": "KALAAKAARI — Independent creative studio. Monorepo: web + admin + api.",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:web": "pnpm --filter @kalaakaari/web dev",
+    "dev:admin": "pnpm --filter @kalaakaari/admin dev",
+    "dev:api": "pnpm --filter @kalaakaari/api dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "seed": "pnpm --filter @kalaakaari/api seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": { "node": ">=18.17" }
+}
