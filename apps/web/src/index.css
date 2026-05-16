@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* —— BASE —— */
+:root {
+  --bg: #0B0A08;
+  --bg-2: #100E0B;
+  --ink: #F4EDE0;
+  --ink-mute: #9C9486;
+  --line: #2A251E;
+  --saffron: #E8631F;
+  --mustard: #F5C542;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Archivo', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  margin: 0;
+}
+::selection { background: var(--saffron); color: var(--bg); }
+
+/* —— GRAIN —— */
+.grain {
+  position: fixed; inset: -100px; pointer-events: none; z-index: 60;
+  mix-blend-mode: overlay; opacity: .22;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 360px 360px;
+  animation: grain 7s steps(8) infinite;
+}
+@keyframes grain {
+  0%,100% { transform: translate(0,0); }
+  25% { transform: translate(-3%,2%); }
+  50% { transform: translate(2%,-3%); }
+  75% { transform: translate(-1%,4%); }
+}
+
+/* —— UTILITIES —— */
+.font-display { font-family: 'Anton', sans-serif; letter-spacing: -.01em; text-transform: uppercase; line-height: .86; }
+.font-deva    { font-family: 'Tiro Devanagari Hindi', serif; }
+.font-serif-i { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; }
+
+.label-tag {
+  font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-mute);
+}
+.veil-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 20% 20%, rgba(232,99,31,.22), transparent 60%),
+    radial-gradient(50% 40% at 80% 30%, rgba(245,197,66,.10), transparent 70%),
+    radial-gradient(70% 60% at 50% 100%, rgba(140,58,26,.30), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .grain { display: none; }
+}
