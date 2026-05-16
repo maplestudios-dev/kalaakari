@@ -1,0 +1,40 @@
+# /etc/nginx/sites-available/kalaakaari-web
+# Serves the public site (Vite build) at https://kalaakaari.in
+#
+# Replace tokens before copying to the server:
+#   __DOMAIN__       — your apex domain, e.g. kalaakaari.in
+#   __WEB_DIST__     — absolute path to apps/web/dist, e.g.
+#                       /var/www/kalaakaari/apps/web/dist
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name __DOMAIN__ www.__DOMAIN__;
+
+    # Certbot will turn this block into an HTTPS one on first run.
+    root __WEB_DIST__;
+    index index.html;
+
+    # gzip / brotli are nice — keep the defaults from /etc/nginx/nginx.conf
+
+    # SPA fallback — every non-asset path returns index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Long-cache hashed assets, no-cache the HTML
+    location ~* \.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|webp|avif|gif|ico|mp4|webm)$ {
+        access_log off;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "interest-cohort=()" always;
+
+    client_max_body_size 25M;
+}

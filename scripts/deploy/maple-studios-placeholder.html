@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Maple Studios — Building things, quietly.</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="description" content="Maple Studios — independent studio. Site under construction." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --ink: #f3eee5;
+    --ink-mute: #8a857a;
+    --accent: #c8a064;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body{
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:40px;
+  }
+  header,footer{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mute);
+  }
+  header .logo{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+    font-size:18px;letter-spacing:-.01em;text-transform:none;color:var(--ink);
+  }
+  header .logo b{font-weight:300;color:var(--accent)}
+  main{
+    display:flex;flex-direction:column;justify-content:center;
+    max-width:900px;margin:0 auto;width:100%;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(48px,8vw,140px);line-height:.95;letter-spacing:-.02em;
+    margin-bottom:24px;
+  }
+  h1 em{color:var(--accent);font-style:italic;font-weight:300}
+  p{font-size:18px;line-height:1.6;max-width:560px;color:var(--ink-mute);font-weight:300;margin-bottom:18px}
+  p strong{color:var(--ink);font-weight:500}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)}
+  a:hover{color:var(--ink);border-color:var(--ink)}
+  .pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:8px;animation:p 2s infinite}
+  @keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+  footer{font-size:10px}
+
+  @media (max-width:700px){
+    body{padding:24px}
+    header,footer{flex-direction:column;align-items:flex-start;gap:8px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Maple <b>Studios</b></div>
+  <div><span class="pulse"></span>Server online</div>
+</header>
+
+<main>
+  <h1>We build <em>things,</em><br/>quietly.</h1>
+  <p>
+    <strong>Maple Studios</strong> is an independent studio. Our own site is still in
+    the making — but our server is happily running other people&rsquo;s work.
+  </p>
+  <p>
+    If you&rsquo;re here because you typed an address we host, you probably want
+    one of the live projects. If you found us via this IP, say hi:
+    <a href="mailto:hello@maplestudios.dev">hello@maplestudios.dev</a>
+  </p>
+</main>
+
+<footer>
+  <div>© Maple Studios</div>
+  <div>Default server · noindex</div>
+</footer>
+
+</body>
+</html>

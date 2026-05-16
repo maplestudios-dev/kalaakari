@@ -1,0 +1,69 @@
+# /etc/nginx/sites-available/00-default.conf
+# Catch-all server block. Handles:
+#   • requests to the bare IP (http://147.79.68.35)
+#   • requests for any domain not configured elsewhere
+#   • TLS SNI requests with an unknown hostname
+#
+# This is the only server block in the whole nginx config that uses
+# `default_server`. Without it, nginx picks the alphabetically-first site
+# as the default, which would leak whichever client happens to come first.
+#
+# Tokens:
+#   __COMPANY_ROOT__  — absolute path to your company placeholder, e.g.
+#                       /var/www/_company/dist
+#
+# Filename starts with "00-" so it sorts first — defensive in case someone
+# accidentally adds another `default_server` somewhere.
+
+# ─── HTTP (port 80) ─────────────────────────────────────────────────
+server {
+    listen      80 default_server;
+    listen [::]:80 default_server;
+    server_name _;                    # match anything
+
+    root  __COMPANY_ROOT__;
+    index index.html;
+
+    # SPA-friendly fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Long-cache static assets
+    location ~* \.(?:js|css|woff2?|svg|png|jpe?g|webp|gif|ico)$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+    }
+
+    add_header X-Frame-Options       "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff"   always;
+    add_header Referrer-Policy        "strict-origin-when-cross-origin" always;
+    add_header X-Robots-Tag           "noindex, nofollow" always;   # don't index the placeholder by IP
+}
+
+# ─── HTTPS (port 443) ───────────────────────────────────────────────
+# This block exists so that TLS requests with an unknown SNI don't end up
+# serving a client's certificate (which would leak the client domain).
+# It uses a self-signed snakeoil cert that ships with Ubuntu — perfectly
+# fine for "I don't know who you are, here's a sealed envelope" responses.
+server {
+    listen      443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    http2 on;
+    server_name _;
+
+    ssl_certificate     /etc/ssl/certs/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+
+    root  __COMPANY_ROOT__;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    add_header X-Frame-Options       "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff"   always;
+    add_header X-Robots-Tag           "noindex, nofollow" always;
+}

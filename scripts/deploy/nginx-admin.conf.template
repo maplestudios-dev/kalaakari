@@ -1,0 +1,32 @@
+# /etc/nginx/sites-available/kalaakaari-admin
+# Serves the admin dashboard (Vite build) at https://admin.kalaakaari.in
+#
+# Tokens:
+#   __DOMAIN__       — apex domain (admin runs at admin.<domain>)
+#   __ADMIN_DIST__   — absolute path to apps/admin/dist
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name admin.__DOMAIN__;
+
+    root __ADMIN_DIST__;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|webp|avif|gif|ico)$ {
+        access_log off;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # The admin is internal — disallow indexing
+    add_header X-Robots-Tag "noindex, nofollow" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer" always;
+}
