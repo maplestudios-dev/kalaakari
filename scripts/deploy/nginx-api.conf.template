@@ -1,0 +1,37 @@
+# /etc/nginx/sites-available/kalaakaari-api
+# Reverse-proxies https://api.kalaakaari.in → http://127.0.0.1:4000 (PM2)
+#
+# Tokens:
+#   __DOMAIN__   — apex domain (API runs at api.<domain>)
+#   __API_PORT__ — local port the Node API listens on (default 4000)
+
+upstream kalaakaari_api {
+    server 127.0.0.1:__API_PORT__;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.__DOMAIN__;
+
+    client_max_body_size 25M;
+
+    # Allow CORS preflights to be fast / not buffered
+    location / {
+        proxy_pass            http://kalaakaari_api;
+        proxy_http_version    1.1;
+        proxy_set_header      Host              $host;
+        proxy_set_header      X-Real-IP         $remote_addr;
+        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto $scheme;
+        proxy_set_header      Upgrade           $http_upgrade;
+        proxy_set_header      Connection        "upgrade";
+        proxy_read_timeout    60s;
+        proxy_send_timeout    60s;
+        proxy_buffering       off;
+    }
+
+    add_header X-Robots-Tag "noindex, nofollow" always;
+    add_header X-Content-Type-Options "nosniff" always;
+}
