@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { copy } from '../lib/api.js'
+import { copy, media } from '../lib/api.js'
 
 export default function CopyPage() {
   const [text, setText] = useState('')
@@ -68,6 +68,22 @@ export default function CopyPage() {
 
   const dirty = text !== originalText
 
+  // ─── Extract meta.favicon from the current JSON for the upload widget ─────
+  // Done as a derived value so the upload widget always reflects what's in the editor.
+  let currentMeta = {}
+  try { currentMeta = JSON.parse(text)?.meta || {} } catch {}
+
+  // Apply a new favicon URL into the JSON in-place (does NOT auto-publish)
+  const setFaviconInJson = (faviconUrl) => {
+    try {
+      const parsed = JSON.parse(text)
+      parsed.meta = parsed.meta || {}
+      parsed.meta.favicon = faviconUrl
+      setText(JSON.stringify(parsed, null, 2))
+      setParseError(null)
+    } catch (e) { setParseError(e.message) }
+  }
+
   return (
     <>
       <header className="flex items-end justify-between mb-8">
@@ -86,6 +102,9 @@ export default function CopyPage() {
           )}
         </div>
       </header>
+
+      {/* ── Favicon widget ───────────────────────────────────────────── */}
+      <FaviconWidget current={currentMeta.favicon} onUpload={setFaviconInJson} />
 
       <div className="grid lg:grid-cols-[1fr_280px] gap-6">
         <div>
@@ -144,5 +163,71 @@ export default function CopyPage() {
         </aside>
       </div>
     </>
+  )
+}
+
+// ─── Favicon upload widget ──────────────────────────────────────────────
+function FaviconWidget({ current, onUpload }) {
+  const fileRef = useRef(null)
+  const [status, setStatus] = useState(null) // { progress, error }
+
+  const handle = async (file) => {
+    if (!file) return
+    setStatus({ progress: 0 })
+    try {
+      const { url } = await media.upload(file, (pct) => setStatus({ progress: pct }))
+      onUpload(url)
+      setStatus({ done: true })
+      setTimeout(() => setStatus(null), 2500)
+    } catch (e) {
+      setStatus({ error: e.response?.data?.error || e.message })
+    }
+  }
+
+  return (
+    <div className="border border-line bg-bg-2 p-5 mb-6">
+      <div className="flex items-start gap-5">
+        <div className="shrink-0">
+          {current
+            ? <img src={current} alt="favicon preview" className="w-16 h-16 border border-line bg-bg p-2 object-contain" />
+            : <div className="w-16 h-16 border border-line bg-bg grid place-items-center font-deva text-mustard text-3xl">क</div>}
+        </div>
+        <div className="flex-1">
+          <div className="label-tag mb-1">Browser favicon</div>
+          <p className="text-ink-mute text-xs leading-relaxed mb-3">
+            Shown in browser tabs, bookmarks, and the home-screen icon. Square SVG or PNG works best (32×32 or larger).
+            {!current && <span> Default is the bundled <span className="text-mustard font-deva">क</span> mark in mustard.</span>}
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/svg+xml,image/png,image/jpeg,image/webp,image/x-icon"
+              className="hidden"
+              onChange={(e) => handle(e.target.files?.[0])}
+            />
+            <button onClick={() => fileRef.current?.click()}
+                    className="px-3 py-2 border border-line text-[11px] tracking-[.2em] uppercase hover:bg-ink hover:text-bg">
+              Upload favicon
+            </button>
+            {current && (
+              <button onClick={() => onUpload('')}
+                      className="px-3 py-2 border border-line text-[11px] tracking-[.2em] uppercase text-ink-mute hover:text-saffron">
+                Reset to default
+              </button>
+            )}
+          </div>
+          {status?.progress != null && status.progress < 100 && !status.done && (
+            <div className="text-xs text-mustard mt-2">Uploading… {status.progress}%</div>
+          )}
+          {status?.done && (
+            <div className="text-xs text-mustard mt-2">✓ Uploaded — click <strong className="text-ink">Publish copy</strong> below to apply.</div>
+          )}
+          {status?.error && (
+            <div className="text-xs text-saffron mt-2">Upload failed: {status.error}</div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

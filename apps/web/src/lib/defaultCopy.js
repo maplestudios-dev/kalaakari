@@ -10,7 +10,9 @@ export const defaultCopy = {
     siteName: 'KALAAKAARI',
     siteNameDeva: 'कलाकारी',
     tagline: 'Independent creative studio · New Delhi',
-    defaultOgImage: ''
+    defaultOgImage: '',
+    favicon: '',          // override URL — blank uses the bundled /favicon.svg (क in mustard)
+    themeColor: '#0B0A08'
   },
 
   nav: {

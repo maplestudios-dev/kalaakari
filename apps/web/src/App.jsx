@@ -3,6 +3,7 @@ import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Grain from './components/Grain.jsx'
 import SEOHead from './components/SEOHead.jsx'
+import FaviconManager from './components/FaviconManager.jsx'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Services from './pages/Services.jsx'
@@ -20,6 +21,7 @@ export default function App() {
     <>
       <Grain />
       <SEOHead />
+      <FaviconManager />
       <Navbar />
       <main>
         <Routes>
