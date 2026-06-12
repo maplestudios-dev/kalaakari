@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import path from 'node:path'
 import express from 'express'
 import mongoose from 'mongoose'
 import helmet from 'helmet'
@@ -18,6 +19,7 @@ import siteCopyRoutes from './routes/siteCopy.js'
 import seoRoutes from './routes/seo.js'
 import videoRoutes from './routes/video.js'
 import testimonialsRoutes from './routes/testimonials.js'
+import mediaRoutes from './routes/media.js'
 import { notFound, errorHandler } from './middleware/errors.js'
 
 const app = express()
@@ -53,7 +55,15 @@ app.use('/api/audit',        auditRoutes)
 app.use('/api/site-copy',    siteCopyRoutes)
 app.use('/api/seo',          seoRoutes)
 app.use('/api/video',        videoRoutes)
+app.use('/api/media',        mediaRoutes)
 app.use('/api',              testimonialsRoutes)  // exposes /testimonials and /press
+
+// Static serving of uploaded media — /uploads/* → apps/api/uploads/*
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads'), {
+  maxAge: '365d',
+  immutable: true,
+  fallthrough: false
+}))
 
 // sitemap.xml / robots.txt at root for convenience
 app.get('/sitemap.xml', (req, res, next) => { req.url = '/api/seo/sitemap.xml'; next() })

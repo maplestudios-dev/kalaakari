@@ -4,7 +4,7 @@ import { auth, meStore } from '../lib/api.js'
 
 export default function Login() {
   const nav = useNavigate()
-  const [email, setEmail] = useState('admin@kalaakaari.in')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [err, setErr] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -39,10 +39,6 @@ export default function Login() {
         <button disabled={loading} className="mt-9 w-full py-4 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors disabled:opacity-50">
           {loading ? 'Signing in…' : 'Sign in →'}
         </button>
-
-        <p className="label-tag text-center mt-6 text-[10px] normal-case tracking-[.1em] text-ink-mute">
-          Default seed: <span className="text-ink">admin@kalaakaari.in</span> / <span className="text-ink">ChangeMe123!</span>
-        </p>
       </form>
     </div>
   )

@@ -3,6 +3,7 @@ import Marquee from '../components/Marquee.jsx'
 import Pillars from '../components/Pillars.jsx'
 import AboutSnapshot from '../components/AboutSnapshot.jsx'
 import FeaturedWork from '../components/FeaturedWork.jsx'
+import HomepageReel from '../components/HomepageReel.jsx'
 import ServicesRows from '../components/ServicesRows.jsx'
 import TestimonialCarousel from '../components/TestimonialCarousel.jsx'
 import ManifestoQuote from '../components/ManifestoQuote.jsx'
@@ -17,6 +18,7 @@ export default function Home() {
       <Pillars />
       <AboutSnapshot />
       <FeaturedWork />
+      <HomepageReel />
       <ServicesRows />
       <TestimonialCarousel />
       <ManifestoQuote />

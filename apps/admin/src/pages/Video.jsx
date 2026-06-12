@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { video, can } from '../lib/api.js'
+import { video, portfolio, can } from '../lib/api.js'
 
 const CATS = ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other']
 
@@ -82,6 +82,7 @@ function Drawer({ initial, onClose, onSaved }) {
     if (source !== 'vimeo')   payload.vimeoId   = ''
     if (source !== 'mp4')     payload.mp4Url    = ''
     if (typeof tagsRaw === 'string') payload.tags = tagsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+    if (!payload.project) payload.project = null   // Mongoose rejects "" for ObjectId
     if (isNew) await video.create(payload)
     else       await video.update(initial._id, payload)
     onSaved()
@@ -119,6 +120,12 @@ function Drawer({ initial, onClose, onSaved }) {
           <F label="Poster URL"><input {...register('poster')} className={I} /></F>
           <F label="Poster alt-text"><input {...register('posterAlt')} className={I} /></F>
           <F label="Hover preview MP4 (optional)" className="md:col-span-2"><input {...register('previewUrl')} className={I} placeholder="https://…/preview.mp4" /></F>
+
+          <F label="Linked portfolio project" className="md:col-span-2">
+            <ProjectPicker register={register} />
+            <span className="block label-tag text-[10px] mt-1.5 normal-case tracking-[.1em] text-ink-mute">Linking a video to a project surfaces it on that project's case study page and pairs them on the homepage.</span>
+          </F>
+
           <F label="Excerpt" className="md:col-span-2"><textarea rows={2} {...register('excerpt')} className={I} /></F>
 
           <div className="md:col-span-2">
@@ -162,4 +169,17 @@ function Drawer({ initial, onClose, onSaved }) {
 const I = 'w-full bg-transparent border border-line py-2.5 px-3 text-ink outline-none focus:border-saffron'
 function F({ label, children, className = '' }) {
   return <label className={`block ${className}`}><span className="label-tag block mb-1.5">{label}</span>{children}</label>
+}
+
+function ProjectPicker({ register }) {
+  const [projects, setProjects] = useState([])
+  useEffect(() => { portfolio.list().then(setProjects).catch(() => {}) }, [])
+  return (
+    <select {...register('project')} className={I}>
+      <option value="">— None —</option>
+      {projects.map((p) => (
+        <option key={p._id} value={p._id}>{p.title} {p.year ? `· ${p.year}` : ''} {p.category ? `· ${p.category}` : ''}</option>
+      ))}
+    </select>
+  )
 }

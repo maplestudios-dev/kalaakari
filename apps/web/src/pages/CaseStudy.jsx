@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import Section, { SectionHead } from '../components/Section.jsx'
 import { SplitText, FadeContent, Magnet, TiltedCard, DarkVeil, CountUp } from '../components/bits/index.jsx'
+import VideoTheater from '../components/VideoTheater.jsx'
 import SEOHead from '../components/SEOHead.jsx'
 
 const DEMO = {
@@ -24,11 +25,13 @@ export default function CaseStudy() {
   const { slug } = useParams()
   const [item, setItem] = useState(null)
   const [related, setRelated] = useState([])
+  const [videos, setVideos] = useState([])
+  const [playing, setPlaying] = useState(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
-    setLoading(true); setNotFound(false); setItem(null)
+    setLoading(true); setNotFound(false); setItem(null); setVideos([])
     const api = import.meta.env.VITE_API_URL
     if (!api) {
       const demo = DEMO[slug]
@@ -39,8 +42,9 @@ export default function CaseStudy() {
     }
     Promise.all([
       axios.get(`${api}/portfolio/${slug}`).catch(() => null),
-      axios.get(`${api}/portfolio`).catch(() => ({ data: { items: [] } }))
-    ]).then(([itemRes, listRes]) => {
+      axios.get(`${api}/portfolio`).catch(() => ({ data: { items: [] } })),
+      axios.get(`${api}/video?projectSlug=${encodeURIComponent(slug)}`).catch(() => ({ data: { items: [] } }))
+    ]).then(([itemRes, listRes, videoRes]) => {
       if (!itemRes?.data?.item) {
         const demo = DEMO[slug]
         if (demo) setItem({ ...demo, slug })
@@ -50,6 +54,7 @@ export default function CaseStudy() {
       }
       const list = listRes.data.items || []
       setRelated(list.filter((p) => p.slug !== slug).slice(0, 3))
+      setVideos(videoRes.data?.items || [])
     }).finally(() => setLoading(false))
   }, [slug])
 
@@ -226,6 +231,35 @@ export default function CaseStudy() {
         </Section>
       )}
 
+      {/* ─── LINKED VIDEOS ──────────── */}
+      {videos.length > 0 && (
+        <Section className="py-24 border-t border-line">
+          <SectionHead label="The film" deva="फ़िल्म" title={videos.length > 1 ? 'Films from this project.' : 'The film for this project.'} />
+          <div className={`grid gap-5 ${videos.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'}`}>
+            {videos.map((v) => (
+              <FadeContent key={v._id}>
+                <button onClick={() => setPlaying(v)} className="block w-full text-left group">
+                  <div className="relative aspect-video bg-bg-2 border border-line overflow-hidden hover:border-saffron transition-colors"
+                       style={v.poster ? { background: `url(${v.poster}) center/cover no-repeat` } : { background: 'linear-gradient(135deg,#2a1810,#0a0805)' }}>
+                    {!v.poster && (
+                      <div className="absolute inset-0 grid place-items-center font-display text-ink-mute/15 text-center px-6"
+                           style={{ fontSize: 'clamp(28px,4vw,56px)' }}>{v.title}</div>
+                    )}
+                    <span className="absolute top-3 left-3 label-tag text-mustard bg-bg/80 px-2 py-1 border border-line">{v.category}</span>
+                    {v.duration && <span className="absolute top-3 right-3 font-display text-xs text-ink-mute bg-bg/80 px-2 py-0.5 border border-line">{v.duration}s</span>}
+                    <div className="absolute inset-0 grid place-items-center">
+                      <div className="w-16 h-16 rounded-full bg-saffron grid place-items-center group-hover:scale-110 transition-transform"><span className="text-bg ml-0.5 text-lg">▶</span></div>
+                    </div>
+                  </div>
+                  <h4 className="font-display text-xl mt-3">{v.title}</h4>
+                  {v.excerpt && <p className="font-serif-i text-ink-mute text-sm mt-1.5 leading-relaxed">{v.excerpt}</p>}
+                </button>
+              </FadeContent>
+            ))}
+          </div>
+        </Section>
+      )}
+
       {/* ─── RELATED ────────────────── */}
       {related.length > 0 && (
         <Section className="py-32 border-t border-line">
@@ -265,6 +299,8 @@ export default function CaseStudy() {
           </Magnet>
         </div>
       </section>
+
+      <VideoTheater video={playing} onClose={() => setPlaying(null)} />
     </>
   )
 }

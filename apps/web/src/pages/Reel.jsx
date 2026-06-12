@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { SplitText, FadeContent, TiltedCard } from '../components/bits/index.jsx'
 import SEOHead from '../components/SEOHead.jsx'
+import { useCopy } from '../lib/copy.jsx'
 
-const CATS = ['All', 'Ad Film', 'Brand Film', 'Music Video', 'Reel', 'BTS', 'Short Film', 'Documentary']
+const CATEGORY_FILTERS = ['Ad Film', 'Brand Film', 'Music Video', 'Reel', 'BTS', 'Short Film', 'Documentary']
 
 const DEMO = [
   { _id: '1', title: 'Namkeen Republic — Launch Film', client: 'Namkeen Republic', category: 'Ad Film', year: 2025, duration: 47, youtubeId: 'dQw4w9WgXcQ', excerpt: 'A 47-second hook for a snack disruptor.', featured: true },
@@ -12,10 +13,13 @@ const DEMO = [
 ]
 
 export default function Reel() {
-  const [filter, setFilter] = useState('All')
+  const cp = useCopy('pages.reel') || {}
+  const allLabel = 'All'
+  const [filter, setFilter] = useState(allLabel)
   const [items, setItems] = useState(DEMO)
   const [playing, setPlaying] = useState(null)
   const [usingApi, setUsingApi] = useState(false)
+  const CATS = [allLabel, ...CATEGORY_FILTERS]
 
   useEffect(() => {
     const api = import.meta.env.VITE_API_URL
@@ -25,7 +29,7 @@ export default function Reel() {
     }).catch(() => {})
   }, [])
 
-  const filtered = filter === 'All' ? items : items.filter((v) => v.category === filter)
+  const filtered = filter === allLabel ? items : items.filter((v) => v.category === filter)
   const featured = items.find((v) => v.featured) || items[0]
 
   return (
@@ -34,12 +38,12 @@ export default function Reel() {
 
       <section className="pt-44 pb-12">
         <div className="max-w-[1320px] mx-auto px-7">
-          <span className="label-tag">The Reel · <span className="font-deva text-mustard normal-case">रील</span></span>
+          <span className="label-tag">{cp.eyebrow} · <span className="font-deva text-mustard normal-case">{cp.eyebrowDeva}</span></span>
           <h1 className="font-display mt-6" style={{ fontSize: 'clamp(72px,12vw,220px)', letterSpacing: '-.02em' }}>
-            <SplitText text="In motion." by="word" />
+            <SplitText text={cp.title || ''} by="word" />
           </h1>
           <p className="font-serif-i text-parchment mt-8 max-w-3xl text-xl leading-relaxed">
-            Films, ads, music videos, BTS. {usingApi ? '' : <span className="text-ink-mute text-base">(Demo content — connect API to load live items.)</span>}
+            {cp.sub} {usingApi ? '' : <span className="text-ink-mute text-base">(Demo content — connect API to load live items.)</span>}
           </p>
         </div>
       </section>

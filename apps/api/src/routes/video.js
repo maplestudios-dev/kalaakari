@@ -7,10 +7,18 @@ import { audit } from '../lib/audit.js'
 const r = Router()
 
 r.get('/', asyncHandler(async (req, res) => {
-  const { category, featured } = req.query
+  const { category, featured, project, projectSlug } = req.query
   const q = { published: true }
   if (category) q.category = category
   if (featured) q.featured = featured === 'true'
+  if (project) q.project = project
+  if (projectSlug) {
+    // resolve a portfolio slug → project id
+    const Portfolio = (await import('../models/Portfolio.js')).default
+    const proj = await Portfolio.findOne({ slug: projectSlug }, '_id').lean()
+    q.project = proj?._id || null
+    if (!proj) return res.json({ items: [] })
+  }
   const items = await Video.find(q).sort({ order: 1, createdAt: -1 })
   res.json({ items })
 }))

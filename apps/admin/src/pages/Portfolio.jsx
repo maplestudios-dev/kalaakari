@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { portfolio } from '../lib/api.js'
+import { portfolio, media } from '../lib/api.js'
 
 const CATS = ['Branding','Campaign','Content','Digital','Performance','Production','Film','Social','Packaging','Identity']
 
@@ -25,6 +25,7 @@ export default function PortfolioPage() {
         <table className="w-full text-sm">
           <thead className="text-left label-tag border-b border-line">
             <tr>
+              <th className="p-4 w-20">Cover</th>
               <th className="p-4">Title</th>
               <th className="p-4">Category</th>
               <th className="p-4">Year</th>
@@ -36,6 +37,11 @@ export default function PortfolioPage() {
           <tbody>
             {items.map((p) => (
               <tr key={p._id} className="border-b border-line">
+                <td className="p-4">
+                  {p.cover
+                    ? <img src={p.cover} alt="" className="w-14 h-14 object-cover border border-line" loading="lazy" />
+                    : <div className="w-14 h-14 grid place-items-center border border-line text-ink-mute text-[9px] tracking-[.18em] uppercase bg-bg">no img</div>}
+                </td>
                 <td className="p-4">{p.title}<span className="block label-tag text-[10px] mt-1">{p.slug}</span></td>
                 <td className="p-4">{p.category}</td>
                 <td className="p-4">{p.year}</td>
@@ -47,7 +53,7 @@ export default function PortfolioPage() {
                 </td>
               </tr>
             ))}
-            {items.length === 0 && <tr><td colSpan="6" className="p-10 text-center label-tag text-ink-mute">No projects yet. Run <code>pnpm seed</code> or click + New project.</td></tr>}
+            {items.length === 0 && <tr><td colSpan="7" className="p-10 text-center label-tag text-ink-mute">No projects yet. Run <code>pnpm seed</code> or click + New project.</td></tr>}
           </tbody>
         </table>
       </div>
@@ -59,7 +65,22 @@ export default function PortfolioPage() {
 
 function EditDrawer({ initial, onClose, onSaved }) {
   const isNew = !initial._id
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm({ defaultValues: initial })
+  const { register, handleSubmit, setValue, watch, formState: { isSubmitting } } = useForm({ defaultValues: initial })
+  const cover = watch('cover')
+  const [uploadStatus, setUploadStatus] = useState(null) // { progress, error }
+  const fileRef = useRef(null)
+
+  const handleUpload = async (file) => {
+    if (!file) return
+    setUploadStatus({ progress: 0 })
+    try {
+      const { url } = await media.upload(file, (pct) => setUploadStatus({ progress: pct }))
+      setValue('cover', url, { shouldDirty: true })
+      setUploadStatus(null)
+    } catch (e) {
+      setUploadStatus({ error: e.response?.data?.error || e.message })
+    }
+  }
 
   const submit = async (data) => {
     if (isNew) await portfolio.create(data)
@@ -87,13 +108,68 @@ function EditDrawer({ initial, onClose, onSaved }) {
           <F label="Year"><input type="number" {...register('year', { valueAsNumber: true })} className={I} /></F>
           <F label="Result tag (short)"><input {...register('result')} className={I} placeholder="4.2M Impressions" /></F>
           <F label="Industry"><input {...register('industry')} className={I} /></F>
-          <F label="Cover URL" className="md:col-span-2"><input {...register('cover')} className={I} /></F>
+
+          {/* ── Cover image (upload + preview + URL field) ────────────── */}
+          <div className="md:col-span-2 border border-line p-4 bg-bg/30">
+            <div className="label-tag mb-3">Cover image</div>
+            <div className="flex items-start gap-4">
+              {/* preview */}
+              <div className="shrink-0">
+                {cover
+                  ? <img src={cover} alt="cover preview" className="w-32 h-32 object-cover border border-line" />
+                  : <div className="w-32 h-32 grid place-items-center border border-line text-ink-mute label-tag text-[10px] bg-bg">No image</div>}
+              </div>
+
+              <div className="flex-1 space-y-3">
+                {/* upload button */}
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleUpload(e.target.files?.[0])}
+                />
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => fileRef.current?.click()}
+                          className="px-3 py-2 border border-line text-[11px] tracking-[.18em] uppercase hover:bg-ink hover:text-bg">
+                    Upload image
+                  </button>
+                  {cover && (
+                    <button type="button" onClick={() => setValue('cover', '', { shouldDirty: true })}
+                            className="px-3 py-2 border border-line text-[11px] tracking-[.18em] uppercase text-ink-mute hover:text-saffron">
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                {uploadStatus?.progress != null && uploadStatus.progress < 100 && (
+                  <div className="text-xs text-mustard">Uploading… {uploadStatus.progress}%</div>
+                )}
+                {uploadStatus?.error && (
+                  <div className="text-xs text-saffron">Upload failed: {uploadStatus.error}</div>
+                )}
+
+                {/* manual URL field */}
+                <label className="block">
+                  <span className="label-tag block mb-1 text-[10px]">…or paste a URL</span>
+                  <input {...register('cover')} className={I} placeholder="https://… or /uploads/…" />
+                </label>
+              </div>
+            </div>
+          </div>
+
           <F label="Excerpt" className="md:col-span-2"><textarea rows={2} {...register('excerpt')} className={I} /></F>
           <F label="Challenge" className="md:col-span-2"><textarea rows={3} {...register('challenge')} className={I} /></F>
           <F label="The thinking" className="md:col-span-2"><textarea rows={3} {...register('idea')} className={I} /></F>
           <F label="The execution" className="md:col-span-2"><textarea rows={3} {...register('execution')} className={I} /></F>
-          <label className="flex items-center gap-2 mt-2"><input type="checkbox" {...register('featured')} /> <span className="label-tag">Featured</span></label>
-          <label className="flex items-center gap-2 mt-2"><input type="checkbox" {...register('published')} defaultChecked={initial.published ?? true} /> <span className="label-tag">Published</span></label>
+          <label className="flex items-center gap-2 mt-2">
+            <input type="checkbox" {...register('featured')} defaultChecked={!!initial.featured} />
+            <span className="label-tag">Featured (homepage)</span>
+          </label>
+          <label className="flex items-center gap-2 mt-2">
+            <input type="checkbox" {...register('published')} defaultChecked={initial.published ?? true} />
+            <span className="label-tag">Published</span>
+          </label>
         </div>
         <div className="mt-8 flex justify-end gap-3">
           <button type="button" onClick={onClose} className="px-5 py-3 border border-line text-[12px] tracking-[.24em] uppercase">Cancel</button>

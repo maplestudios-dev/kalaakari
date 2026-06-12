@@ -3,6 +3,7 @@ import axios from 'axios'
 import Section, { SectionHead } from '../components/Section.jsx'
 import { SplitText, FadeContent, DarkVeil } from '../components/bits/index.jsx'
 import SEOHead from '../components/SEOHead.jsx'
+import { useCopy } from '../lib/copy.jsx'
 
 const DEMO = [
   { _id: 'd1', type: 'Award',   title: 'Brand Identity of the Year — Hauz Khas Collective', publication: 'Kyoorius Design Awards', date: '2025-09-01', excerpt: 'Recognized for clarity, restraint, and cultural specificity.', url: '#' },
@@ -13,6 +14,10 @@ const DEMO = [
 ]
 
 export default function Press() {
+  const c = useCopy('pages.press') || {}
+  const awardsCopy  = c.awards  || {}
+  const archiveCopy = c.archive || {}
+
   const [items, setItems] = useState(DEMO)
   const [usingApi, setUsingApi] = useState(false)
   const [filter, setFilter] = useState('All')
@@ -37,14 +42,14 @@ export default function Press() {
       <section className="relative pt-44 pb-24 overflow-hidden">
         <DarkVeil />
         <div className="max-w-[1320px] mx-auto px-7 relative">
-          <span className="label-tag">Press & Awards · <span className="font-deva text-mustard normal-case">सम्मान</span></span>
+          <span className="label-tag">{c.eyebrow} · <span className="font-deva text-mustard normal-case">{c.eyebrowDeva}</span></span>
           <h1 className="font-display mt-6" style={{ fontSize: 'clamp(72px,12vw,220px)', letterSpacing: '-.02em' }}>
-            <SplitText text="The receipts" by="word" />
+            <SplitText text={c.title1 || ''} by="word" />
             <br />
-            <span className="font-serif-i font-light text-saffron"><SplitText text="we did not write." by="word" delay={0.3} /></span>
+            <span className="font-serif-i font-light text-saffron"><SplitText text={c.title2 || ''} by="word" delay={0.3} /></span>
           </h1>
           <p className="font-serif-i text-parchment mt-8 max-w-3xl text-xl leading-relaxed">
-            Awards, features, and the words of other people. {usingApi ? '' : <span className="text-ink-mute text-base">(Demo content — manage at /press in the admin.)</span>}
+            {c.sub} {usingApi ? '' : <span className="text-ink-mute text-base">(Demo content — manage at /press in the admin.)</span>}
           </p>
         </div>
       </section>
@@ -53,7 +58,7 @@ export default function Press() {
       {publications.length > 0 && (
         <section className="border-y border-line py-14 bg-bg-2">
           <div className="max-w-[1320px] mx-auto px-7">
-            <p className="label-tag text-center mb-8">As featured in</p>
+            <p className="label-tag text-center mb-8">{c.publicationsLabel}</p>
             <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 font-display text-ink-mute" style={{ fontSize: 'clamp(20px,2.4vw,32px)' }}>
               {publications.map((p) => <span key={p} className="opacity-80 hover:opacity-100 hover:text-ink transition-opacity">{p}</span>)}
             </div>
@@ -64,7 +69,7 @@ export default function Press() {
       {/* Awards highlight */}
       {awards.length > 0 && (
         <Section className="py-24">
-          <SectionHead label="Awards" deva="पुरस्कार" title="Recognized work." />
+          <SectionHead label={awardsCopy.eyebrow} deva={awardsCopy.eyebrowDeva} title={awardsCopy.title} />
           <div className="grid md:grid-cols-2 gap-5">
             {awards.map((a, i) => (
               <FadeContent key={a._id} delay={i * 0.05}>
@@ -74,7 +79,7 @@ export default function Press() {
                   <h3 className="font-display text-3xl md:text-4xl mt-3 leading-tight">{a.title}</h3>
                   {a.publication && <div className="font-serif-i text-ink-mute mt-3 text-lg">{a.publication}</div>}
                   {a.excerpt && <p className="text-ink-mute mt-4 leading-relaxed">{a.excerpt}</p>}
-                  <div className="mt-6 label-tag group-hover:text-saffron transition-colors">Read about it →</div>
+                  <div className="mt-6 label-tag group-hover:text-saffron transition-colors">{awardsCopy.readMore}</div>
                 </a>
               </FadeContent>
             ))}
@@ -86,9 +91,9 @@ export default function Press() {
       <section className="py-24 bg-bg-2 border-t border-line">
         <div className="max-w-[1320px] mx-auto px-7">
           <SectionHead
-            label="All mentions"
-            deva="कवरेज"
-            title={<>The full archive.</>}
+            label={archiveCopy.eyebrow}
+            deva={archiveCopy.eyebrowDeva}
+            title={archiveCopy.title}
             right={
               <div className="flex gap-2 flex-wrap">
                 {types.map((t) => (
@@ -118,7 +123,7 @@ export default function Press() {
                 </a>
               </FadeContent>
             ))}
-            {filtered.length === 0 && <p className="label-tag text-ink-mute text-center p-10">No entries match this filter.</p>}
+            {filtered.length === 0 && <p className="label-tag text-ink-mute text-center p-10">{archiveCopy.emptyMessage}</p>}
           </div>
         </div>
       </section>

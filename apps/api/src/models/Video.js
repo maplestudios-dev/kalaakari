@@ -6,6 +6,9 @@ const VideoSchema = new mongoose.Schema(
     slug:         { type: String, required: true, unique: true, lowercase: true, trim: true },
     client:       { type: String },
     deva:         { type: String },
+    // Optional link to a portfolio project — used for "related reels" on the
+    // case study page and to power the homepage reel-by-work pairing.
+    project:      { type: mongoose.Schema.Types.ObjectId, ref: 'PortfolioProject' },
     category:     { type: String, enum: ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other'], default: 'Ad Film' },
     duration:     { type: Number },                  // seconds
     year:         { type: Number },

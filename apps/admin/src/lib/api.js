@@ -97,6 +97,19 @@ export const blog = {
   remove: (id) => api.delete(`/blog/${id}`)
 }
 
+export const media = {
+  upload(file, onProgress) {
+    const fd = new FormData()
+    fd.append('file', file)
+    return api.post('/media', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (e) => {
+        if (onProgress && e.total) onProgress(Math.round((e.loaded * 100) / e.total))
+      }
+    }).then((r) => r.data)   // { url, filename, size, mimetype }
+  }
+}
+
 export const meStore = {
   set(me, rolePermissions) {
     localStorage.setItem('kalaakaari_me', JSON.stringify({ me, rolePermissions }))

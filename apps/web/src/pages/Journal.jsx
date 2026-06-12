@@ -4,6 +4,7 @@ import axios from 'axios'
 import Section from '../components/Section.jsx'
 import { SplitText, FadeContent, DarkVeil, ShinyText } from '../components/bits/index.jsx'
 import SEOHead from '../components/SEOHead.jsx'
+import { useCopy } from '../lib/copy.jsx'
 
 const DEMO = [
   { _id: 'd1', slug: 'kala-kaari-culture', title: 'Kala. Kaari. Culture.', category: 'Studio Notes', author: 'Kalaakaari Studio', excerpt: 'Why we named the studio after a verb, not a thing.', publishedAt: '2025-09-12', readTime: 4 },
@@ -13,9 +14,11 @@ const DEMO = [
 ]
 
 export default function Journal() {
+  const cp = useCopy('pages.journal') || {}
+  const allLabel = 'All'
   const [items, setItems] = useState(DEMO)
   const [usingApi, setUsingApi] = useState(false)
-  const [cat, setCat] = useState('All')
+  const [cat, setCat] = useState(allLabel)
 
   useEffect(() => {
     const api = import.meta.env.VITE_API_URL
@@ -25,8 +28,8 @@ export default function Journal() {
     }).catch(() => {})
   }, [])
 
-  const cats = ['All', ...Array.from(new Set(items.map((i) => i.category).filter(Boolean)))]
-  const filtered = useMemo(() => cat === 'All' ? items : items.filter((i) => i.category === cat), [items, cat])
+  const cats = [allLabel, ...Array.from(new Set(items.map((i) => i.category).filter(Boolean)))]
+  const filtered = useMemo(() => cat === allLabel ? items : items.filter((i) => i.category === cat), [items, cat])
   const [hero, ...rest] = filtered
 
   return (
@@ -36,14 +39,14 @@ export default function Journal() {
       <section className="relative pt-44 pb-16 overflow-hidden">
         <DarkVeil />
         <div className="max-w-[1320px] mx-auto px-7 relative">
-          <span className="label-tag">The Journal · <span className="font-deva text-mustard normal-case">पत्रिका</span></span>
+          <span className="label-tag">{cp.eyebrow} · <span className="font-deva text-mustard normal-case">{cp.eyebrowDeva}</span></span>
           <h1 className="font-display mt-6" style={{ fontSize: 'clamp(72px,12vw,220px)', letterSpacing: '-.02em' }}>
-            <SplitText text="Notes" by="word" />
+            <SplitText text={cp.title1 || ''} by="word" />
             <br />
-            <span className="font-serif-i font-light text-saffron"><SplitText text="from the studio." by="word" delay={0.3} /></span>
+            <span className="font-serif-i font-light text-saffron"><SplitText text={cp.title2 || ''} by="word" delay={0.3} /></span>
           </h1>
           <p className="font-serif-i text-parchment mt-8 max-w-3xl text-xl leading-relaxed">
-            Short essays. Long arguments. Reflections on craft, branding, and culture from the people who run the studio. {usingApi ? '' : <span className="text-ink-mute text-base">(Demo content — write your own at /blog in the admin.)</span>}
+            {cp.sub} {usingApi ? '' : <span className="text-ink-mute text-base">(Demo content — write your own at /blog in the admin.)</span>}
           </p>
         </div>
       </section>
@@ -74,7 +77,7 @@ export default function Journal() {
                 )}
               </div>
               <div className="order-1 md:order-2">
-                <span className="label-tag text-saffron"><ShinyText>Featured</ShinyText> · {hero.category}</span>
+                <span className="label-tag text-saffron"><ShinyText>{cp.featuredLabel || 'Featured'}</ShinyText> · {hero.category}</span>
                 <h2 className="font-display mt-4 group-hover:text-mustard transition-colors" style={{ fontSize: 'clamp(40px,6vw,84px)', letterSpacing: '-.02em', lineHeight: 1 }}>
                   {hero.title}
                 </h2>
@@ -120,7 +123,7 @@ export default function Journal() {
 
       {filtered.length === 0 && (
         <Section className="py-24">
-          <p className="label-tag text-ink-mute text-center">No posts in this category yet.</p>
+          <p className="label-tag text-ink-mute text-center">{cp.emptyMessage}</p>
         </Section>
       )}
     </>
