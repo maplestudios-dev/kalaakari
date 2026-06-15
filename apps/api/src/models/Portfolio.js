@@ -9,7 +9,8 @@ const PortfolioSchema = new mongoose.Schema(
     industry:    { type: String },
     category:    { type: String, enum: ['Branding','Campaign','Content','Digital','Performance','Production','Film','Social','Packaging','Identity'], default: 'Branding' },
     year:        { type: Number },
-    cover:       { type: String },         // image url
+    cover:       { type: String },         // 4:3 thumbnail — used on cards (Work grid, homepage, related)
+    coverWide:   { type: String },         // 16:9 widescreen — used on case-study hero. Falls back to `cover`.
     video:       { type: String },         // optional reel
     gallery:     [{ type: String }],
     excerpt:     { type: String },

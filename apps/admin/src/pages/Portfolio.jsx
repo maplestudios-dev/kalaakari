@@ -66,21 +66,6 @@ export default function PortfolioPage() {
 function EditDrawer({ initial, onClose, onSaved }) {
   const isNew = !initial._id
   const { register, handleSubmit, setValue, watch, formState: { isSubmitting } } = useForm({ defaultValues: initial })
-  const cover = watch('cover')
-  const [uploadStatus, setUploadStatus] = useState(null) // { progress, error }
-  const fileRef = useRef(null)
-
-  const handleUpload = async (file) => {
-    if (!file) return
-    setUploadStatus({ progress: 0 })
-    try {
-      const { url } = await media.upload(file, (pct) => setUploadStatus({ progress: pct }))
-      setValue('cover', url, { shouldDirty: true })
-      setUploadStatus(null)
-    } catch (e) {
-      setUploadStatus({ error: e.response?.data?.error || e.message })
-    }
-  }
 
   const submit = async (data) => {
     if (isNew) await portfolio.create(data)
@@ -109,54 +94,30 @@ function EditDrawer({ initial, onClose, onSaved }) {
           <F label="Result tag (short)"><input {...register('result')} className={I} placeholder="4.2M Impressions" /></F>
           <F label="Industry"><input {...register('industry')} className={I} /></F>
 
-          {/* ── Cover image (upload + preview + URL field) ────────────── */}
-          <div className="md:col-span-2 border border-line p-4 bg-bg/30">
-            <div className="label-tag mb-3">Cover image</div>
-            <div className="flex items-start gap-4">
-              {/* preview */}
-              <div className="shrink-0">
-                {cover
-                  ? <img src={cover} alt="cover preview" className="w-32 h-32 object-cover border border-line" />
-                  : <div className="w-32 h-32 grid place-items-center border border-line text-ink-mute label-tag text-[10px] bg-bg">No image</div>}
-              </div>
+          {/* ── Cover 4:3 (used on every card surface — Work, homepage, related) ── */}
+          <ImageUploader
+            className="md:col-span-2"
+            label="Cover · 4:3 thumbnail"
+            help="Used on /work cards, the homepage Featured Work grid, and related-project cards. Aim for a square-ish image — at least 800 × 600 px."
+            field="cover"
+            aspectClass="w-32 h-32"
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
 
-              <div className="flex-1 space-y-3">
-                {/* upload button */}
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleUpload(e.target.files?.[0])}
-                />
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => fileRef.current?.click()}
-                          className="px-3 py-2 border border-line text-[11px] tracking-[.18em] uppercase hover:bg-ink hover:text-bg">
-                    Upload image
-                  </button>
-                  {cover && (
-                    <button type="button" onClick={() => setValue('cover', '', { shouldDirty: true })}
-                            className="px-3 py-2 border border-line text-[11px] tracking-[.18em] uppercase text-ink-mute hover:text-saffron">
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                {uploadStatus?.progress != null && uploadStatus.progress < 100 && (
-                  <div className="text-xs text-mustard">Uploading… {uploadStatus.progress}%</div>
-                )}
-                {uploadStatus?.error && (
-                  <div className="text-xs text-saffron">Upload failed: {uploadStatus.error}</div>
-                )}
-
-                {/* manual URL field */}
-                <label className="block">
-                  <span className="label-tag block mb-1 text-[10px]">…or paste a URL</span>
-                  <input {...register('cover')} className={I} placeholder="https://… or /uploads/…" />
-                </label>
-              </div>
-            </div>
-          </div>
+          {/* ── Cover 16:9 (used on case study hero) ───────────────────── */}
+          <ImageUploader
+            className="md:col-span-2"
+            label="Hero · 16:9 widescreen"
+            help="Shown at the top of the case study page (/work/<slug>). Optional — falls back to the 4:3 thumbnail above. Best ~1920 × 1080 px."
+            field="coverWide"
+            aspectClass="w-48 h-27"
+            previewStyle={{ aspectRatio: '16 / 9' }}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
 
           <F label="Excerpt" className="md:col-span-2"><textarea rows={2} {...register('excerpt')} className={I} /></F>
           <F label="Challenge" className="md:col-span-2"><textarea rows={3} {...register('challenge')} className={I} /></F>
@@ -185,4 +146,77 @@ function EditDrawer({ initial, onClose, onSaved }) {
 const I = 'w-full bg-transparent border border-line py-2.5 px-3 text-ink outline-none focus:border-saffron'
 function F({ label, children, className = '' }) {
   return <label className={`block ${className}`}><span className="label-tag block mb-1.5">{label}</span>{children}</label>
+}
+
+/**
+ * Reusable image upload widget — preview, upload button, optional URL paste.
+ * Stores the URL in react-hook-form under `field`. Optional aspect-ratio preview
+ * box via `previewStyle={{ aspectRatio: '16 / 9' }}`.
+ */
+function ImageUploader({ label, help, field, register, setValue, watch, className = '', previewStyle, aspectClass = 'w-32 h-32' }) {
+  const value = watch(field)
+  const fileRef = useRef(null)
+  const [status, setStatus] = useState(null)
+
+  const handle = async (file) => {
+    if (!file) return
+    setStatus({ progress: 0 })
+    try {
+      const { url } = await media.upload(file, (pct) => setStatus({ progress: pct }))
+      setValue(field, url, { shouldDirty: true })
+      setStatus(null)
+    } catch (e) {
+      setStatus({ error: e.response?.data?.error || e.message })
+    }
+  }
+
+  return (
+    <div className={`border border-line p-4 bg-bg/30 ${className}`}>
+      <div className="label-tag mb-3">{label}</div>
+      <div className="flex items-start gap-4">
+        {/* Preview */}
+        <div className="shrink-0">
+          {value
+            ? <img src={value} alt={`${field} preview`} className={`${aspectClass} object-cover border border-line`} style={previewStyle} />
+            : <div className={`${aspectClass} grid place-items-center border border-line text-ink-mute label-tag text-[10px] bg-bg`} style={previewStyle}>No image</div>}
+        </div>
+
+        <div className="flex-1 space-y-3">
+          {help && <p className="text-ink-mute text-[11px] leading-relaxed">{help}</p>}
+
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handle(e.target.files?.[0])}
+          />
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => fileRef.current?.click()}
+                    className="px-3 py-2 border border-line text-[11px] tracking-[.18em] uppercase hover:bg-ink hover:text-bg">
+              Upload image
+            </button>
+            {value && (
+              <button type="button" onClick={() => setValue(field, '', { shouldDirty: true })}
+                      className="px-3 py-2 border border-line text-[11px] tracking-[.18em] uppercase text-ink-mute hover:text-saffron">
+                Clear
+              </button>
+            )}
+          </div>
+
+          {status?.progress != null && status.progress < 100 && (
+            <div className="text-xs text-mustard">Uploading… {status.progress}%</div>
+          )}
+          {status?.error && (
+            <div className="text-xs text-saffron">Upload failed: {status.error}</div>
+          )}
+
+          <label className="block">
+            <span className="label-tag block mb-1 text-[10px]">…or paste a URL</span>
+            <input {...register(field)} className={I} placeholder="https://… or /uploads/…" />
+          </label>
+        </div>
+      </div>
+    </div>
+  )
 }

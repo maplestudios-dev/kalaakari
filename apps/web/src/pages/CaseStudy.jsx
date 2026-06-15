@@ -124,8 +124,10 @@ export default function CaseStudy() {
         <div className="max-w-[1320px] mx-auto px-7">
           <FadeContent>
             <div className="aspect-[16/9] bg-bg-2 border border-line relative overflow-hidden"
-                 style={{ background: item.cover ? `url(${item.cover}) center/cover no-repeat` : 'linear-gradient(135deg,#2a1810 0%,#0f0a07 100%)' }}>
-              {!item.cover && (
+                 style={{ background: (item.coverWide || item.cover)
+                   ? `url(${item.coverWide || item.cover}) center/cover no-repeat`
+                   : 'linear-gradient(135deg,#2a1810 0%,#0f0a07 100%)' }}>
+              {!(item.coverWide || item.cover) && (
                 <span className="absolute inset-0 flex items-center justify-center font-display text-center px-8"
                       style={{ fontSize: 'clamp(48px,8vw,140px)', color: 'rgba(244,237,224,.07)', letterSpacing: '-.02em' }}>
                   {item.title}
@@ -268,10 +270,17 @@ export default function CaseStudy() {
             {related.map((p, i) => (
               <FadeContent key={p._id || p.slug} delay={i * 0.06}>
                 <Link to={`/work/${p.slug}`} className="group block bg-bg-2 border border-line overflow-hidden hover:border-saffron transition-colors">
-                  <div className="aspect-[4/3] relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#2a1810,#0f0a07)' }}>
+                  <div className="aspect-[4/3] relative overflow-hidden"
+                       style={p.cover
+                         ? { background: `linear-gradient(180deg, transparent 50%, rgba(11,10,8,.45)), url(${p.cover}) center/cover no-repeat` }
+                         : { background: 'linear-gradient(135deg,#2a1810,#0f0a07)' }}>
                     <span className="absolute top-4 left-4 z-10 label-tag text-mustard bg-bg/80 px-2.5 py-1.5 border border-line">{p.category} · {p.year}</span>
-                    <span className="absolute inset-0 flex items-center justify-center font-display text-center px-6 transition-all duration-700 group-hover:scale-110"
-                          style={{ fontSize: 'clamp(40px,6vw,80px)', color: 'rgba(244,237,224,.07)' }}>{p.title}</span>
+                    {!p.cover && (
+                      <span className="absolute inset-0 flex items-center justify-center font-display text-center px-6 transition-all duration-700 group-hover:scale-110"
+                            style={{ fontSize: 'clamp(40px,6vw,80px)', color: 'rgba(244,237,224,.07)' }}>{p.title}</span>
+                    )}
+                    <span className="absolute inset-0 pointer-events-none transition-all duration-500"
+                          style={{ background: 'radial-gradient(circle at 30% 30%, rgba(232,99,31,.15), transparent 60%)' }} />
                   </div>
                   <div className="px-5 py-5 border-t border-line">
                     <h4 className="font-display text-2xl">{p.title}</h4>
