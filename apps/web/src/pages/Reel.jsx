@@ -36,16 +36,17 @@ export default function Reel() {
   }, [])
 
   const filtered = filter === allLabel ? items : items.filter((v) => v.category === filter)
-  const featured = items.find((v) => v.featured) || items[0]
+  // /reel hero is pinned independently of the homepage "featured" flag.
+  const featured = items.find((v) => v.reelHero) || items.find((v) => v.featured) || items[0]
 
   return (
     <>
       <SEOHead overrides={{ title: 'The Reel · KALAAKAARI', description: 'Films, ads and brand moving image work from the KALAAKAARI studio.' }} />
 
-      <section className="pt-44 pb-12">
+      <section className="pt-32 sm:pt-44 pb-12">
         <div className="max-w-[1320px] mx-auto px-7">
           <span className="label-tag">{cp.eyebrow} · <span className="font-deva text-mustard normal-case">{cp.eyebrowDeva}</span></span>
-          <h1 className="font-display mt-6" style={{ fontSize: 'clamp(72px,12vw,220px)', letterSpacing: '-.02em' }}>
+          <h1 className="font-display mt-6 break-words" style={{ fontSize: 'clamp(48px,12vw,220px)', letterSpacing: '-.02em' }}>
             <SplitText text={cp.title || ''} by="word" />
           </h1>
           <p className="font-serif-i text-parchment mt-8 max-w-3xl text-xl leading-relaxed">

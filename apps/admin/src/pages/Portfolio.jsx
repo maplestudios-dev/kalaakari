@@ -146,6 +146,9 @@ function EditDrawer({ initial, onClose, onSaved }) {
             watch={watch}
           />
 
+          <F label="Instagram URL (optional)"><input {...register('instagramUrl')} className={I} placeholder="https://instagram.com/reel/…" /></F>
+          <F label="YouTube URL (optional)"><input {...register('youtubeUrl')} className={I} placeholder="https://youtube.com/watch?v=…" /></F>
+
           <F label="Excerpt" className="md:col-span-2"><textarea rows={2} {...register('excerpt')} className={I} /></F>
           <F label="Challenge" className="md:col-span-2"><textarea rows={3} {...register('challenge')} className={I} /></F>
           <F label="The thinking" className="md:col-span-2"><textarea rows={3} {...register('idea')} className={I} /></F>

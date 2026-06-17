@@ -42,11 +42,11 @@ export default function Contact() {
 
   return (
     <>
-      <section className="relative pt-44 pb-12 overflow-hidden">
+      <section className="relative pt-32 sm:pt-44 pb-12 overflow-hidden">
         <DarkVeil />
         <div className="max-w-[1320px] mx-auto px-7 relative">
           <span className="label-tag">{c.eyebrow} · <span className="font-deva text-mustard normal-case">{c.eyebrowDeva}</span></span>
-          <h1 className="font-display mt-6" style={{ fontSize: 'clamp(64px,10vw,180px)', letterSpacing: '-.02em' }}>
+          <h1 className="font-display mt-6 break-words" style={{ fontSize: 'clamp(44px,10vw,180px)', letterSpacing: '-.02em' }}>
             <SplitText text={c.title1 || ''} by="word" />
             <br />
             <span className="font-serif-i font-light text-saffron"><SplitText text={c.title2 || ''} by="word" delay={0.3} /></span>

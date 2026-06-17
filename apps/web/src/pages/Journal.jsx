@@ -36,11 +36,11 @@ export default function Journal() {
     <>
       <SEOHead overrides={{ title: 'Journal · KALAAKAARI', description: 'Notes, essays and studio dispatches from KALAAKAARI.' }} />
 
-      <section className="relative pt-44 pb-16 overflow-hidden">
+      <section className="relative pt-32 sm:pt-44 pb-16 overflow-hidden">
         <DarkVeil />
         <div className="max-w-[1320px] mx-auto px-7 relative">
           <span className="label-tag">{cp.eyebrow} · <span className="font-deva text-mustard normal-case">{cp.eyebrowDeva}</span></span>
-          <h1 className="font-display mt-6" style={{ fontSize: 'clamp(72px,12vw,220px)', letterSpacing: '-.02em' }}>
+          <h1 className="font-display mt-6 break-words" style={{ fontSize: 'clamp(48px,12vw,220px)', letterSpacing: '-.02em' }}>
             <SplitText text={cp.title1 || ''} by="word" />
             <br />
             <span className="font-serif-i font-light text-saffron"><SplitText text={cp.title2 || ''} by="word" delay={0.3} /></span>

@@ -24,7 +24,8 @@ const VideoSchema = new mongoose.Schema(
     excerpt:      { type: String },
     credits:      [{ role: String, name: String }],   // [{ role: 'Director', name: '…' }, …]
     tags:         [{ type: String }],
-    featured:     { type: Boolean, default: false },
+    featured:     { type: Boolean, default: false },   // shown in the homepage reel section (multiple allowed)
+    reelHero:     { type: Boolean, default: false },   // pinned hero at the top of /reel (single)
     published:    { type: Boolean, default: true },
     order:        { type: Number, default: 0 }
   },

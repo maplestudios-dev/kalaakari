@@ -62,7 +62,7 @@ export default function VideoPage() {
                 <td className="p-4 label-tag normal-case tracking-[.1em] text-[11px]">
                   {v.youtubeId ? `YouTube · ${v.youtubeId}` : v.vimeoId ? `Vimeo · ${v.vimeoId}` : v.mp4Url ? 'MP4' : '—'}
                 </td>
-                <td className="p-4">{v.featured ? <span className="text-mustard">★</span> : '—'}</td>
+                <td className="p-4 whitespace-nowrap">{v.featured ? <span className="text-mustard" title="Featured on homepage">★</span> : '—'}{v.reelHero ? <span className="ml-1.5 label-tag text-saffron" title="Reel page hero">HERO</span> : ''}</td>
                 <td className="p-4">{v.published ? <span className="label-tag">Live</span> : <span className="label-tag text-saffron">Draft</span>}</td>
                 <td className="p-4 text-right space-x-3">
                   {can('video.write') && <button onClick={() => setEditing(v)} className="text-saffron hover:underline">edit</button>}
@@ -197,7 +197,11 @@ function Drawer({ initial, onClose, onSaved }) {
 
           <label className="flex items-start gap-2 md:col-span-2">
             <input type="checkbox" {...register('featured')} className="mt-1" />
-            <span className="label-tag">Set as Reel hero <span className="block normal-case tracking-[.08em] text-[10px] text-ink-mute mt-0.5">Pins this video as the large featured player at the top of /reel. Only one video can be the hero — setting this unpins any other.</span></span>
+            <span className="label-tag">Featured on homepage <span className="block normal-case tracking-[.08em] text-[10px] text-ink-mute mt-0.5">Shows this video in the homepage reel section. You can feature several videos.</span></span>
+          </label>
+          <label className="flex items-start gap-2 md:col-span-2">
+            <input type="checkbox" {...register('reelHero')} className="mt-1" />
+            <span className="label-tag">Reel page hero <span className="block normal-case tracking-[.08em] text-[10px] text-ink-mute mt-0.5">Pins this as the large player at the top of /reel. Independent of homepage — only one video can be the Reel hero, so setting this unpins any other.</span></span>
           </label>
           <label className="flex items-center gap-2"><input type="checkbox" {...register('published')} defaultChecked={initial.published ?? true} /> <span className="label-tag">Published</span></label>
         </div>

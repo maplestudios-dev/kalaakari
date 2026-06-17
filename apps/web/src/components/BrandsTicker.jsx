@@ -5,14 +5,17 @@ import { useCopy } from '../lib/copy.jsx'
 const isDeva = (s = '') => /[ऀ-ॿ]/.test(s)
 
 /**
- * Client marquee — continuous auto-scroll with manual drag/swipe.
- * Renders uploaded brand logos when available (auto-tinted light for the dark
- * background); otherwise falls back to the text names from Site Copy.
- * Auto-scroll pauses on hover/touch and resumes on release.
+ * Client marquee. Renders uploaded brand logos in their original colour when
+ * available, otherwise the text names from Site Copy.
+ *
+ * Scrolling is adaptive: only when the (de-duplicated) logos are wider than the
+ * viewport do we duplicate them for a seamless loop. With just a few logos they
+ * render once, centred — so a brand never appears twice on screen.
  */
 export default function BrandsTicker() {
   const tokens = useCopy('brandsTicker') || []
   const [logos, setLogos] = useState([])
+  const [scroll, setScroll] = useState(false)
   const scroller = useRef(null)
   const paused = useRef(false)
   const drag = useRef(null)
@@ -26,14 +29,27 @@ export default function BrandsTicker() {
   }, [])
 
   const useLogos = logos.length > 0
-  // De-duplicate the source so the same brand never repeats within one set
-  // (the single trailing copy below is only to make the scroll seamless).
+  // De-duplicate so the same brand is never listed twice in the source.
   const base = useLogos
     ? logos.filter((b, i, a) => a.findIndex((x) => (x.logo || x.name) === (b.logo || b.name)) === i)
     : tokens.filter((t, i, a) => a.indexOf(t) === i)
-  const row = [...base, ...base]
+  const content = scroll ? [...base, ...base] : base
 
+  // Decide whether scrolling is needed (content wider than the rail).
   useEffect(() => {
+    const el = scroller.current
+    if (!el) return
+    const measure = () => {
+      if (!scroll && el.scrollWidth > el.clientWidth + 4) setScroll(true)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [base.length, scroll])
+
+  // Auto-scroll only when scrolling is actually needed.
+  useEffect(() => {
+    if (!scroll) return
     const el = scroller.current
     if (!el) return
     el.scrollLeft = el.scrollWidth / 4
@@ -49,7 +65,7 @@ export default function BrandsTicker() {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [base.length])
+  }, [scroll, base.length])
 
   const wrap = () => {
     const el = scroller.current
@@ -60,6 +76,7 @@ export default function BrandsTicker() {
   }
 
   const onPointerDown = (e) => {
+    if (!scroll) return
     paused.current = true
     drag.current = { x: e.clientX, start: scroller.current.scrollLeft }
     scroller.current.setPointerCapture?.(e.pointerId)
@@ -75,8 +92,8 @@ export default function BrandsTicker() {
     <section className="border-y border-line bg-bg overflow-hidden py-12">
       <div
         ref={scroller}
-        className="flex gap-20 items-center whitespace-nowrap overflow-x-hidden cursor-grab active:cursor-grabbing select-none touch-pan-y"
-        onMouseEnter={() => { paused.current = true }}
+        className={`flex gap-12 md:gap-20 items-center whitespace-nowrap overflow-x-hidden select-none touch-pan-y ${scroll ? 'cursor-grab active:cursor-grabbing' : 'justify-center'}`}
+        onMouseEnter={() => { if (scroll) paused.current = true }}
         onMouseLeave={() => { if (!drag.current) paused.current = false }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -84,17 +101,16 @@ export default function BrandsTicker() {
         onPointerCancel={endDrag}
       >
         {useLogos
-          ? row.map((b, i) => (
+          ? content.map((b, i) => (
               <img
                 key={i}
                 src={b.logo}
                 alt={b.name || 'Client'}
-                className="h-8 md:h-10 w-auto object-contain pointer-events-none opacity-60 hover:opacity-100 transition-opacity"
-                style={{ filter: 'brightness(0) invert(1)' }}
+                className="h-8 md:h-10 w-auto object-contain pointer-events-none"
                 loading="lazy"
               />
             ))
-          : row.map((t, i) =>
+          : content.map((t, i) =>
               isDeva(t)
                 ? <span key={i} className="font-deva text-mustard text-3xl pointer-events-none">{t}</span>
                 : <span key={i} className="font-display text-4xl text-ink-mute uppercase pointer-events-none">{t}</span>

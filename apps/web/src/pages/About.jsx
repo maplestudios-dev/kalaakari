@@ -10,11 +10,11 @@ export default function About() {
 
   return (
     <>
-      <section className="relative pt-44 pb-24 overflow-hidden">
+      <section className="relative pt-32 sm:pt-44 pb-24 overflow-hidden">
         <DarkVeil />
         <div className="max-w-[1320px] mx-auto px-7 relative">
           <span className="label-tag">{c.eyebrow} · <span className="font-deva text-mustard normal-case">{c.eyebrowDeva}</span></span>
-          <h1 className="font-display mt-6" style={{ fontSize: 'clamp(80px,12vw,220px)', letterSpacing: '-.02em' }}>
+          <h1 className="font-display mt-6 break-words" style={{ fontSize: 'clamp(48px,12vw,220px)', letterSpacing: '-.02em' }}>
             <SplitText text={c.title1 || ''} by="word" />
             <br />
             <span className="font-serif-i font-light text-saffron">

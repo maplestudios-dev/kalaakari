@@ -61,12 +61,12 @@ export default function ServiceDetail() {
     <>
       <SEOHead overrides={{ title: `${view.name} · KALAAKAARI`, description: view.body || `${view.name} services from KALAAKAARI.` }} />
 
-      <section className="relative pt-44 pb-16 overflow-hidden">
+      <section className="relative pt-32 sm:pt-44 pb-16 overflow-hidden">
         <DarkVeil />
         <div className="max-w-[1320px] mx-auto px-7 relative">
           <Link to="/services" className="label-tag text-ink-mute hover:text-saffron transition-colors">← All services</Link>
           {view.number && <div className="label-tag text-saffron mt-6">№ {view.number}</div>}
-          <h1 className="font-display mt-3 leading-[.9]" style={{ fontSize: 'clamp(56px,10vw,180px)', letterSpacing: '-.02em' }}>
+          <h1 className="font-display mt-3 leading-[.9] break-words" style={{ fontSize: 'clamp(44px,10vw,180px)', letterSpacing: '-.02em' }}>
             <SplitText text={view.name} by="word" />
           </h1>
           {view.deva && <p className="font-deva text-mustard mt-3" style={{ fontSize: 'clamp(18px,2vw,28px)' }}>{view.deva}</p>}

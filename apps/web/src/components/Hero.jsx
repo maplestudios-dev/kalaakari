@@ -62,7 +62,7 @@ export default function Hero() {
 
 function TitleSlide({ h }) {
   return (
-    <div className="relative min-h-screen pt-36 pb-20 overflow-hidden">
+    <div className="relative min-h-screen pt-28 sm:pt-36 pb-16 sm:pb-20 overflow-hidden">
       <DarkVeil />
 
       <span className="absolute left-[-3vw] top-[5vh] font-deva pointer-events-none select-none"

@@ -10,10 +10,10 @@ export default function Services() {
 
   return (
     <>
-      <section className="pt-44 pb-12">
+      <section className="pt-32 sm:pt-44 pb-12">
         <div className="max-w-[1320px] mx-auto px-7">
           <span className="label-tag">{c.eyebrow} · <span className="font-deva text-mustard normal-case">{c.eyebrowDeva}</span></span>
-          <h1 className="font-display mt-6" style={{ fontSize: 'clamp(72px,11vw,200px)', letterSpacing: '-.02em' }}>
+          <h1 className="font-display mt-6 break-words" style={{ fontSize: 'clamp(48px,11vw,200px)', letterSpacing: '-.02em' }}>
             <SplitText text={c.title1 || ''} by="word" />
             <br />
             <span className="font-serif-i font-light text-saffron"><SplitText text={c.title2 || ''} by="word" delay={0.3} /></span>
