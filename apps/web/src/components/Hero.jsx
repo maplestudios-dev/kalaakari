@@ -28,19 +28,13 @@ export default function Hero() {
   }, [total, paused])
 
   return (
-    <section className="relative min-h-screen overflow-hidden"
+    <section className="relative overflow-hidden"
              onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      {/* Slide 1 — built-in typographic hero (always present, defines height) */}
-      <div className={`transition-opacity duration-700 ${idx === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <TitleSlide h={h} />
-      </div>
-
-      {/* Extra CMS slides — full-bleed image or video */}
-      {slides.map((s, i) => (
-        <div key={i} className={`absolute inset-0 transition-opacity duration-700 ${idx === i + 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <MediaSlide slide={s} />
-        </div>
-      ))}
+      {/* Only the active slide is rendered, so the hero's height adapts to it —
+          full-screen for the title, a tidy 16:9 band for media slides. */}
+      {idx === 0
+        ? <TitleSlide h={h} />
+        : <MediaSlide slide={slides[idx - 1]} />}
 
       {total > 1 && (
         <>
@@ -138,26 +132,28 @@ function TitleSlide({ h }) {
 function MediaSlide({ slide }) {
   const external = /^https?:/i.test(slide.ctaHref || '')
   return (
-    <div className="w-full min-h-screen flex items-center justify-center px-4 sm:px-7 pt-28 pb-16">
-      {/* Fixed 16:9 frame — media fills it without distorting the page layout */}
+    <div className="w-full px-4 sm:px-7 pt-24 sm:pt-28 pb-12 sm:pb-16">
+      {/* 16:9 band — height comes from the frame itself, so no huge empty hero on mobile */}
       <div className="w-full max-w-[1280px] mx-auto">
         <div className="relative w-full aspect-video overflow-hidden border border-line bg-black">
           {slide.kind === 'video'
             ? <video src={slide.src} poster={slide.poster || undefined} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
             : <img src={slide.src} alt={slide.alt || ''} className="absolute inset-0 w-full h-full object-cover" />}
-          <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-bg/20 to-transparent" />
           {(slide.headline || slide.ctaLabel) && (
-            <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
-              {slide.headline && <h2 className="font-display text-3xl md:text-5xl max-w-2xl leading-[.95]">{slide.headline}</h2>}
-              {slide.sub && <p className="font-serif-i text-parchment mt-3 max-w-xl text-base md:text-lg">{slide.sub}</p>}
-              {slide.ctaLabel && slide.ctaHref && (
-                <Magnet>
-                  {external
-                    ? <a href={slide.ctaHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 mt-5 px-6 py-3.5 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</a>
-                    : <Link to={slide.ctaHref} className="inline-flex items-center gap-3 mt-5 px-6 py-3.5 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</Link>}
-                </Magnet>
-              )}
-            </div>
+            <>
+              <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-bg/30 to-transparent" />
+              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 md:p-10">
+                {slide.headline && <h2 className="font-display text-lg sm:text-3xl md:text-5xl max-w-2xl leading-[1.05] sm:leading-[.95]">{slide.headline}</h2>}
+                {slide.sub && <p className="hidden sm:block font-serif-i text-parchment mt-3 max-w-xl text-base md:text-lg">{slide.sub}</p>}
+                {slide.ctaLabel && slide.ctaHref && (
+                  <Magnet>
+                    {external
+                      ? <a href={slide.ctaHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 mt-3 sm:mt-5 px-4 sm:px-6 py-2.5 sm:py-3.5 bg-saffron text-bg text-[10px] sm:text-[12px] tracking-[.2em] sm:tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</a>
+                      : <Link to={slide.ctaHref} className="inline-flex items-center gap-3 mt-3 sm:mt-5 px-4 sm:px-6 py-2.5 sm:py-3.5 bg-saffron text-bg text-[10px] sm:text-[12px] tracking-[.2em] sm:tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</Link>}
+                  </Magnet>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
