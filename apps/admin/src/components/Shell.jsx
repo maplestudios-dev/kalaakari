@@ -8,6 +8,8 @@ const linkDefs = [
   { to: '/video',        label: 'Videos',        perm: 'video.read' },
   { to: '/categories',   label: 'Categories',    perm: 'portfolio.read' },
   { to: '/blog',         label: 'Journal',       perm: 'blog.read' },
+  { to: '/careers',      label: 'Careers',       perm: 'blog.read' },
+  { to: '/recommendations', label: 'Recommendations', perm: 'blog.read' },
   { to: '/testimonials', label: 'Testimonials',  perm: 'testimonials.write' },
   { to: '/press',        label: 'Press',         perm: 'press.write' },
   { to: '/submissions',  label: 'Leads',         perm: 'leads.read' },

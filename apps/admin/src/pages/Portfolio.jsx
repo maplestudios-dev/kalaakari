@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { portfolio } from '../lib/api.js'
 import ImageUploader from '../components/ImageUploader.jsx'
 import { useRowDrag, reorder } from '../lib/useRowDrag.js'
+import { useCategories } from '../lib/useCategories.js'
 
 const CATS = ['Branding','Campaign','Content','Digital','Performance','Production','Film','Social','Packaging','Identity']
 
@@ -78,6 +79,7 @@ export default function PortfolioPage() {
 }
 
 function EditDrawer({ initial, onClose, onSaved }) {
+  const cats = useCategories('portfolio', CATS)
   const isNew = !initial._id
   const { register, handleSubmit, setValue, watch, formState: { isSubmitting } } = useForm({ defaultValues: initial })
 
@@ -101,7 +103,7 @@ function EditDrawer({ initial, onClose, onSaved }) {
           <F label="Hindi / Devanagari label"><input {...register('deva')} className={I} placeholder="हौज़ ख़ास" /></F>
           <F label="Category">
             <select {...register('category')} className={I}>
-              {CATS.map((c) => <option key={c}>{c}</option>)}
+              {cats.map((c) => <option key={c}>{c}</option>)}
             </select>
           </F>
           <F label="Year"><input type="number" {...register('year', { valueAsNumber: true })} className={I} /></F>
@@ -128,6 +130,17 @@ function EditDrawer({ initial, onClose, onSaved }) {
             field="coverWide"
             aspectClass="w-48 h-27"
             previewStyle={{ aspectRatio: '16 / 9' }}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+
+          <ImageUploader
+            className="md:col-span-2"
+            label="Client logo (shown on the case-study header)"
+            help="Transparent PNG/SVG preferred. If empty, the client name is shown in large type instead."
+            field="clientLogo"
+            aspectClass="w-40 h-20"
             register={register}
             setValue={setValue}
             watch={watch}

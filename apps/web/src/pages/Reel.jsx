@@ -3,7 +3,7 @@ import axios from 'axios'
 import { SplitText, FadeContent, TiltedCard } from '../components/bits/index.jsx'
 import SEOHead from '../components/SEOHead.jsx'
 import { useCopy } from '../lib/copy.jsx'
-import { youtubeEmbedSrc, vimeoEmbedSrc } from '../lib/videoEmbed.js'
+import { youtubeEmbedSrc, vimeoEmbedSrc, posterFor } from '../lib/videoEmbed.js'
 
 const CATEGORY_FILTERS = ['Ad Film', 'Brand Film', 'Music Video', 'Reel', 'BTS', 'Short Film', 'Documentary']
 
@@ -20,13 +20,18 @@ export default function Reel() {
   const [items, setItems] = useState(DEMO)
   const [playing, setPlaying] = useState(null)
   const [usingApi, setUsingApi] = useState(false)
-  const CATS = [allLabel, ...CATEGORY_FILTERS]
+  const [filterCats, setFilterCats] = useState(CATEGORY_FILTERS)
+  const CATS = [allLabel, ...filterCats]
 
   useEffect(() => {
     const api = import.meta.env.VITE_API_URL
     if (!api) return
     axios.get(`${api}/video`).then((r) => {
       if (r.data?.items?.length) { setItems(r.data.items); setUsingApi(true) }
+    }).catch(() => {})
+    axios.get(`${api}/categories?type=video`).then((r) => {
+      const names = (r.data?.items || []).map((c) => c.name)
+      if (names.length) setFilterCats(names)
     }).catch(() => {})
   }, [])
 
@@ -57,8 +62,8 @@ export default function Reel() {
               <div className="relative aspect-video bg-bg-2 border border-line cursor-pointer group overflow-hidden"
                    onClick={() => setPlaying(featured)}>
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#2a1810] to-[#0a0805]"
-                     style={featured.poster ? { background: `url(${featured.poster}) center/cover no-repeat` } : undefined}>
-                  {!featured.poster && (
+                     style={posterFor(featured) ? { background: `url(${posterFor(featured)}) center/cover no-repeat` } : undefined}>
+                  {!posterFor(featured) && (
                     <span className="font-display text-[clamp(48px,8vw,140px)] text-ink-mute/10 px-6 text-center">{featured.title}</span>
                   )}
                 </div>
@@ -99,8 +104,8 @@ export default function Reel() {
                 <TiltedCard max={4}>
                   <div className={`relative ${v.orientation === 'portrait' ? 'aspect-[9/16] max-w-[300px] mx-auto' : 'aspect-video'} bg-bg-2 border border-line overflow-hidden hover:border-saffron transition-colors group`}>
                     <div className="absolute inset-0 bg-gradient-to-br from-[#2a1810] to-[#0a0805] flex items-center justify-center"
-                         style={v.poster ? { background: `url(${v.poster}) center/cover no-repeat` } : undefined}>
-                      {!v.poster && (
+                         style={posterFor(v) ? { background: `url(${posterFor(v)}) center/cover no-repeat` } : undefined}>
+                      {!posterFor(v) && (
                         <span className="font-display text-2xl md:text-3xl text-ink-mute/15 px-4 text-center">{v.title}</span>
                       )}
                     </div>

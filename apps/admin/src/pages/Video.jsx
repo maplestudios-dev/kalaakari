@@ -4,6 +4,7 @@ import { video, portfolio, can } from '../lib/api.js'
 import { extractYouTubeId, extractVimeoId, isYouTubeShorts } from '../lib/videoEmbed.js'
 import ImageUploader from '../components/ImageUploader.jsx'
 import { useRowDrag, reorder } from '../lib/useRowDrag.js'
+import { useCategories } from '../lib/useCategories.js'
 
 const CATS = ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other']
 
@@ -89,6 +90,7 @@ function Drawer({ initial, onClose, onSaved }) {
   const { fields, append, remove } = useFieldArray({ control, name: 'credits' })
   const source = watch('source')
   const youtubeVal = watch('youtubeId')
+  const cats = useCategories('video', CATS)
 
   // A pasted YouTube Shorts URL is always vertical — flip orientation for the editor.
   useEffect(() => {
@@ -125,7 +127,7 @@ function Drawer({ initial, onClose, onSaved }) {
           <F label="Slug"><input {...register('slug', { required: true })} className={I} placeholder="namkeen-republic-launch" /></F>
           <F label="Client"><input {...register('client')} className={I} /></F>
           <F label="Hindi label"><input {...register('deva')} className={I} placeholder="नमकीन" /></F>
-          <F label="Category"><select {...register('category')} className={I}>{CATS.map((c) => <option key={c}>{c}</option>)}</select></F>
+          <F label="Category"><select {...register('category')} className={I}>{cats.map((c) => <option key={c}>{c}</option>)}</select></F>
           <F label="Year"><input type="number" {...register('year', { valueAsNumber: true })} className={I} /></F>
           <F label="Duration (seconds)"><input type="number" {...register('duration', { valueAsNumber: true })} className={I} /></F>
           <F label="Order (smaller = first)"><input type="number" {...register('order', { valueAsNumber: true })} className={I} /></F>

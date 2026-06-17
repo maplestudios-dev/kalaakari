@@ -75,3 +75,16 @@ export function vimeoEmbedSrc(input, { autoplay = true } = {}) {
   const id = extractVimeoId(input)
   return id ? `https://player.vimeo.com/video/${id}${autoplay ? '?autoplay=1' : ''}` : ''
 }
+
+/**
+ * Thumbnail to show for a video card. Uses the uploaded poster when present,
+ * otherwise auto-derives one from a YouTube video (YouTube serves a frame at a
+ * stable URL). Vimeo/MP4 without a poster return '' and fall back to the
+ * title placeholder — those can still be set via the poster uploader.
+ */
+export function posterFor(video) {
+  if (!video) return ''
+  if (video.poster) return video.poster
+  const yt = extractYouTubeId(video.youtubeId)
+  return yt ? `https://img.youtube.com/vi/${yt}/hqdefault.jpg` : ''
+}

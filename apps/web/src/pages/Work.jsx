@@ -5,6 +5,7 @@ import Section, { SectionHead } from '../components/Section.jsx'
 import { SplitText, FadeContent, TiltedCard, Magnet } from '../components/bits/index.jsx'
 import VideoTheater from '../components/VideoTheater.jsx'
 import { useCopy } from '../lib/copy.jsx'
+import { posterFor } from '../lib/videoEmbed.js'
 
 const CATEGORY_FILTERS = ['Branding', 'Campaign', 'Content', 'Digital', 'Performance', 'Production']
 
@@ -28,6 +29,7 @@ export default function Work() {
   const [videos, setVideos] = useState([])
   const [playing, setPlaying] = useState(null)
   const [usingApi, setUsingApi] = useState(false)
+  const [cats, setCats] = useState(CATEGORY_FILTERS)
 
   useEffect(() => {
     const api = import.meta.env.VITE_API_URL
@@ -39,9 +41,13 @@ export default function Work() {
       const list = r.data?.items?.length ? r.data.items : []
       setVideos(list.slice(0, 4))
     }).catch(() => {})
+    axios.get(`${api}/categories?type=portfolio`).then((r) => {
+      const names = (r.data?.items || []).map((c) => c.name)
+      if (names.length) setCats(names)
+    }).catch(() => {})
   }, [])
 
-  const filters = [allLabel, ...CATEGORY_FILTERS]
+  const filters = [allLabel, ...cats]
   const filtered = filter === allLabel ? items : items.filter((p) => p.category === filter)
 
   return (
@@ -102,8 +108,8 @@ export default function Work() {
               {videos.map((v) => (
                 <button key={v._id} onClick={() => setPlaying(v)} className="text-left">
                   <div className="relative aspect-video bg-bg border border-line overflow-hidden hover:border-saffron transition-colors group"
-                       style={v.poster ? { background: `url(${v.poster}) center/cover no-repeat` } : { background: 'linear-gradient(135deg,#2a1810,#0a0805)' }}>
-                    {!v.poster && (
+                       style={posterFor(v) ? { background: `url(${posterFor(v)}) center/cover no-repeat` } : { background: 'linear-gradient(135deg,#2a1810,#0a0805)' }}>
+                    {!posterFor(v) && (
                       <div className="absolute inset-0 grid place-items-center font-display text-ink-mute/15 text-center px-3 text-sm">{v.title}</div>
                     )}
                     <span className="absolute top-2.5 left-2.5 label-tag text-mustard bg-bg/80 px-2 py-1 border border-line text-[9px]">{v.category}</span>

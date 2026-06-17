@@ -9,8 +9,8 @@ Status legend: ⬜ todo · 🟡 partial (prior work) · ✅ done · 🔵 needs p
 
 | # | Section | Change | Priority | Status |
 |---|---------|--------|----------|--------|
-| 1 | Navbar | Recommendations section (music/movies/books), CMS-editable | HIGH | ⬜ |
-| 2 | Navbar | Logo easter egg panel (KALAA + KAARI breakdown) + entry icon | MEDIUM | 🔵 |
+| 1 | Navbar | Recommendations section (music/movies/books), CMS-editable | HIGH | ✅ |
+| 2 | Navbar | Logo easter egg panel (KALAA + KAARI breakdown) + entry icon | MEDIUM | ✅ |
 | 3 | Hero | Convert hero to CMS-editable carousel (image/video slides) | HIGH | ✅ |
 | 4 | About | Counters animate up from 0; seeds → 4 / 42+ / 180M; remove "DEMO SEED" note | HIGH | ✅ |
 | 5 | Sneak Peek | Replace bottom category with client name (equal prominence to title) | HIGH | ✅ |
@@ -20,18 +20,18 @@ Status legend: ⬜ todo · 🟡 partial (prior work) · ✅ done · 🔵 needs p
 | 9 | Client Marquee | Auto-scroll + manual swipe (pause on hover/touch) | MEDIUM | ✅ |
 | 10 | Footer | Email → business@kalaakaari.in, clickable mailto: link | HIGH | ✅ |
 | 11 | Work Page | Replace bottom category with client name on cards | HIGH | ✅ |
-| 12 | Work Page | Make project categories editable via CMS (add/rename/remove) | HIGH | ⬜ |
-| 13 | Project Pages | Prominent client logo/name in project header (logo uploadable) | HIGH | ⬜ |
-| 14 | Reel | Fix missing video thumbnails (render poster; CMS-uploadable) | HIGH | 🟡 |
+| 12 | Work Page | Make project categories editable via CMS (add/rename/remove) | HIGH | ✅ |
+| 13 | Project Pages | Prominent client logo/name in project header (logo uploadable) | HIGH | ✅ |
+| 14 | Reel | Fix missing video thumbnails (render poster; CMS-uploadable) | HIGH | ✅ |
 | 15 | Reel | Add client name to video cards (replace category at bottom) | HIGH | ✅ |
-| 16 | Reel | CMS control to pin featured hero video | HIGH | 🟡 |
+| 16 | Reel | CMS control to pin featured hero video | HIGH | ✅ |
 | 17 | Reel | Support vertical / short-form 9:16 video | HIGH | ✅ |
-| 18 | Reel | Make video categories editable via CMS | HIGH | ⬜ |
-| 19 | Services | Individual service pages with linked (filtered) portfolio | HIGH | ⬜ |
-| 20 | Services | Make services fully editable via CMS (names, copy, sub-caps, projects) | HIGH | ⬜ |
-| 21 | Journal | Make journal categories editable via CMS | MEDIUM | ⬜ |
-| 22 | Careers | CMS-editable job postings (create/edit/unpublish) | HIGH | 🟡 |
-| 23 | — | (Reel thumbnail auto-generate from video — optional enhancement) | LOW | 🔵 |
+| 18 | Reel | Make video categories editable via CMS | HIGH | ✅ |
+| 19 | Services | Individual service pages with linked (filtered) portfolio | HIGH | ✅ |
+| 20 | Services | Make services fully editable via CMS (names, copy, sub-caps, projects) | HIGH | ✅ |
+| 21 | Journal | Make journal categories editable via CMS | MEDIUM | ✅ |
+| 22 | Careers | CMS-editable job postings (create/edit/unpublish) | HIGH | ✅ |
+| 23 | — | (Reel thumbnail auto-generate from video — optional enhancement) | LOW | ✅ |
 
 Notes on prior work / existing infra:
 - **#17 done** — `orientation` field + 9:16 player & cards already shipped.

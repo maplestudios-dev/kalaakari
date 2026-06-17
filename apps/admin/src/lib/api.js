@@ -112,6 +112,21 @@ export const blog = {
   remove: (id) => api.delete(`/blog/${id}`)
 }
 
+export const careers = {
+  list:   () => api.get('/careers/all').then((r) => r.data.items),
+  create: (data) => api.post('/careers', data).then((r) => r.data.item),
+  update: (id, data) => api.put(`/careers/${id}`, data).then((r) => r.data.item),
+  remove: (id) => api.delete(`/careers/${id}`)
+}
+
+export const recommendations = {
+  list:   () => api.get('/recommendations/all').then((r) => r.data.items),
+  create: (data) => api.post('/recommendations', data).then((r) => r.data.item),
+  update: (id, data) => api.put(`/recommendations/${id}`, data).then((r) => r.data.item),
+  remove: (id) => api.delete(`/recommendations/${id}`),
+  reorder: (ids) => api.put('/recommendations/reorder', { ids }).then((r) => r.data)
+}
+
 export const media = {
   upload(file, onProgress) {
     const fd = new FormData()

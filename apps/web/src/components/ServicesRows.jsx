@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Section, { SectionHead } from './Section.jsx'
 import { FadeContent, SpotlightCard } from './bits/index.jsx'
 import { useCopy } from '../lib/copy.jsx'
+import { slugify } from '../pages/ServiceDetail.jsx'
 
 export default function ServicesRows() {
   const s = useCopy('services') || {}
@@ -20,7 +21,7 @@ export default function ServicesRows() {
         {(s.items || []).map((it, i) => (
           <FadeContent key={it.n} delay={i * 0.04}>
             <SpotlightCard>
-              <Link to="/services" className="group grid items-center gap-6 md:gap-8 py-9 border-t border-line transition-all duration-300 hover:pl-6 relative overflow-hidden"
+              <Link to={`/services/${it.slug || slugify(it.en)}`} className="group grid items-center gap-6 md:gap-8 py-9 border-t border-line transition-all duration-300 hover:pl-6 relative overflow-hidden"
                 style={{ gridTemplateColumns: '60px 1fr 60px' }}>
                 <span className="absolute inset-0 bg-gradient-to-r from-saffron/5 to-transparent -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
                 <div className="font-display text-3xl text-ink-mute group-hover:text-saffron transition-colors">{it.n}</div>

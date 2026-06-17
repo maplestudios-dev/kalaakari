@@ -9,6 +9,7 @@ const PortfolioSchema = new mongoose.Schema(
     industry:    { type: String },
     category:    { type: String, default: 'Branding' },   // values managed via the Category CMS taxonomy
     year:        { type: Number },
+    clientLogo:  { type: String },         // client logo shown prominently on the case-study header
     cover:       { type: String },         // 4:3 thumbnail — used on cards (Work grid, homepage, related)
     coverWide:   { type: String },         // 16:9 widescreen — used on case-study hero. Falls back to `cover`.
     video:       { type: String },         // optional reel

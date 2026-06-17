@@ -22,6 +22,7 @@ export const defaultCopy = {
       { to: '/services', label: 'Services' },
       { to: '/about',    label: 'Studio' },
       { to: '/journal',  label: 'Journal' },
+      { to: '/recommendations', label: 'Picks' },
       { to: '/careers',  label: 'Careers' },
       { to: '/press',    label: 'Press' },
       { to: '/contact',  label: 'Contact' }

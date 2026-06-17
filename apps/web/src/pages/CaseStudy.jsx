@@ -105,6 +105,16 @@ export default function CaseStudy() {
             {item.industry && <span className="label-tag">{item.industry}</span>}
           </div>
 
+          {/* Client identity — immediately visible above the fold */}
+          {(item.clientLogo || item.client) && (
+            <div className="mt-7 flex items-center gap-4">
+              {item.clientLogo
+                ? <img src={item.clientLogo} alt={item.client || 'Client'} className="h-12 md:h-16 w-auto object-contain" />
+                : <span className="font-display text-3xl md:text-5xl text-ink">{item.client}</span>}
+              {item.clientLogo && item.client && <span className="label-tag text-ink-mute">{item.client}</span>}
+            </div>
+          )}
+
           <h1 className="font-display mt-4 leading-[.9]" style={{ fontSize: 'clamp(60px,10vw,180px)', letterSpacing: '-.02em' }}>
             <SplitText text={item.title} by="word" />
           </h1>

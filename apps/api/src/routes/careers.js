@@ -10,6 +10,12 @@ r.get('/', asyncHandler(async (req, res) => {
   res.json({ items })
 }))
 
+// AUTHED: all posts incl. drafts — for the CMS
+r.get('/all', requireAuth, asyncHandler(async (req, res) => {
+  const items = await JobPost.find({}).sort({ createdAt: -1 })
+  res.json({ items })
+}))
+
 r.post('/', requireAuth, asyncHandler(async (req, res) => {
   const item = await JobPost.create(req.body)
   res.status(201).json({ item })

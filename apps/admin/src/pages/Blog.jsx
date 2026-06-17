@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { blog, can } from '../lib/api.js'
+import { useCategories } from '../lib/useCategories.js'
 
 const CATS = ['Branding','Campaign Thinking','Cultural Strategy','Content & Social','Design','Advertising','Performance Creative','Studio Notes']
 
@@ -63,6 +64,7 @@ export default function BlogPage() {
 
 function Drawer({ initial, onClose, onSaved }) {
   const isNew = initial._new
+  const cats = useCategories('journal', CATS)
   const initPubDate = initial.publishedAt ? new Date(initial.publishedAt).toISOString().slice(0,10) : ''
   const { register, handleSubmit, watch, formState: { isSubmitting } } = useForm({
     defaultValues: isNew
@@ -97,7 +99,7 @@ function Drawer({ initial, onClose, onSaved }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <F label="Title" className="md:col-span-2"><input {...register('title', { required: true })} className={I} /></F>
           <F label="Slug"><input {...register('slug', { required: true })} className={I} placeholder="naming-against-the-grain" /></F>
-          <F label="Category"><select {...register('category')} className={I}>{CATS.map((c) => <option key={c}>{c}</option>)}</select></F>
+          <F label="Category"><select {...register('category')} className={I}>{cats.map((c) => <option key={c}>{c}</option>)}</select></F>
           <F label="Author"><input {...register('author')} className={I} /></F>
           <F label="Cover image URL"><input {...register('cover')} className={I} /></F>
           <F label="Excerpt (1-2 sentences)" className="md:col-span-2"><textarea rows={2} {...register('excerpt')} className={I} /></F>

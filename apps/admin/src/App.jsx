@@ -14,6 +14,8 @@ import SeoPage from './pages/Seo.jsx'
 import TestimonialsPage from './pages/Testimonials.jsx'
 import PressPage from './pages/Press.jsx'
 import BlogPage from './pages/Blog.jsx'
+import CareersPage from './pages/Careers.jsx'
+import RecommendationsPage from './pages/Recommendations.jsx'
 import Shell from './components/Shell.jsx'
 
 function Protected({ children }) {
@@ -35,6 +37,8 @@ export default function App() {
         <Route path="/categories"    element={<CategoriesPage />} />
         <Route path="/video"         element={<VideoPage />} />
         <Route path="/blog"          element={<BlogPage />} />
+        <Route path="/careers"       element={<CareersPage />} />
+        <Route path="/recommendations" element={<RecommendationsPage />} />
         <Route path="/testimonials"  element={<TestimonialsPage />} />
         <Route path="/press"         element={<PressPage />} />
         <Route path="/submissions"   element={<Submissions />} />

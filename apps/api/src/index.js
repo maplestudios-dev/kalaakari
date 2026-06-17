@@ -14,6 +14,7 @@ import blogRoutes from './routes/blog.js'
 import careersRoutes from './routes/careers.js'
 import homepageRoutes from './routes/homepage.js'
 import categoryRoutes from './routes/categories.js'
+import recommendationRoutes from './routes/recommendations.js'
 import usersRoutes from './routes/users.js'
 import auditRoutes from './routes/audit.js'
 import siteCopyRoutes from './routes/siteCopy.js'
@@ -50,6 +51,7 @@ app.use('/api/blog',         blogRoutes)
 app.use('/api/careers',      careersRoutes)
 app.use('/api/homepage',     homepageRoutes)
 app.use('/api/categories',   categoryRoutes)
+app.use('/api/recommendations', recommendationRoutes)
 
 // new modules
 app.use('/api/users',        usersRoutes)

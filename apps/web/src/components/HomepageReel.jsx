@@ -5,6 +5,7 @@ import Section, { SectionHead } from './Section.jsx'
 import { FadeContent, TiltedCard, Magnet } from './bits/index.jsx'
 import VideoTheater from './VideoTheater.jsx'
 import { useCopy } from '../lib/copy.jsx'
+import { posterFor } from '../lib/videoEmbed.js'
 
 const DEMO = [
   { _id: 'rd1', slug: 'namkeen-republic-launch', title: 'Namkeen Republic — Launch Film', category: 'Ad Film', year: 2025, duration: 47, youtubeId: 'dQw4w9WgXcQ' },
@@ -58,8 +59,8 @@ export default function HomepageReel() {
               <TiltedCard max={4}>
                 <div className="relative aspect-video bg-bg-2 border border-line overflow-hidden hover:border-saffron transition-colors group">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#2a1810] to-[#0a0805] flex items-center justify-center"
-                       style={v.poster ? { background: `url(${v.poster}) center/cover no-repeat` } : undefined}>
-                    {!v.poster && (
+                       style={posterFor(v) ? { background: `url(${posterFor(v)}) center/cover no-repeat` } : undefined}>
+                    {!posterFor(v) && (
                       <span className="font-display text-2xl md:text-3xl text-ink-mute/15 px-4 text-center">{v.title}</span>
                     )}
                   </div>

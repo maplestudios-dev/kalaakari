@@ -31,6 +31,8 @@ r.get('/:slug', asyncHandler(async (req, res) => {
 
 r.post('/', requireAuth, requirePermission('video.write'), asyncHandler(async (req, res) => {
   const item = await Video.create(req.body)
+  // Only one video may be the pinned Reel hero at a time.
+  if (item.featured) await Video.updateMany({ _id: { $ne: item._id } }, { $set: { featured: false } })
   await audit({ req, action: 'create', resource: 'video', resourceId: String(item._id), summary: `Created video "${item.title}"` })
   res.status(201).json({ item })
 }))
@@ -48,6 +50,8 @@ r.put('/reorder', requireAuth, requirePermission('video.write'), asyncHandler(as
 r.put('/:id', requireAuth, requirePermission('video.write'), asyncHandler(async (req, res) => {
   const item = await Video.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
   if (!item) { res.status(404); throw new Error('Not found') }
+  // Pinning this one as the Reel hero unpins any other.
+  if (req.body.featured) await Video.updateMany({ _id: { $ne: item._id } }, { $set: { featured: false } })
   await audit({ req, action: 'update', resource: 'video', resourceId: String(item._id), summary: `Updated video "${item.title}"` })
   res.json({ item })
 }))
