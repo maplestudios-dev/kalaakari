@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { video, portfolio, can } from '../lib/api.js'
+import { extractYouTubeId, extractVimeoId } from '../lib/videoEmbed.js'
 
 const CATS = ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other']
 
@@ -81,6 +82,10 @@ function Drawer({ initial, onClose, onSaved }) {
     if (source !== 'youtube') payload.youtubeId = ''
     if (source !== 'vimeo')   payload.vimeoId   = ''
     if (source !== 'mp4')     payload.mp4Url    = ''
+    // Editors often paste a full share/watch URL — store the bare ID so the
+    // public player builds a valid embed src.
+    if (source === 'youtube' && payload.youtubeId) payload.youtubeId = extractYouTubeId(payload.youtubeId)
+    if (source === 'vimeo'   && payload.vimeoId)   payload.vimeoId   = extractVimeoId(payload.vimeoId)
     if (typeof tagsRaw === 'string') payload.tags = tagsRaw.split(',').map((s) => s.trim()).filter(Boolean)
     if (!payload.project) payload.project = null   // Mongoose rejects "" for ObjectId
     if (isNew) await video.create(payload)
@@ -113,8 +118,8 @@ function Drawer({ initial, onClose, onSaved }) {
               <option value="mp4">MP4 URL</option>
             </select>
           </F>
-          {source === 'youtube' && <F label="YouTube ID" className="md:col-span-2"><input {...register('youtubeId')} className={I} placeholder="dQw4w9WgXcQ" /></F>}
-          {source === 'vimeo'   && <F label="Vimeo ID"   className="md:col-span-2"><input {...register('vimeoId')}   className={I} placeholder="123456789" /></F>}
+          {source === 'youtube' && <F label="YouTube ID or URL" className="md:col-span-2"><input {...register('youtubeId')} className={I} placeholder="dQw4w9WgXcQ or https://youtu.be/dQw4w9WgXcQ" /></F>}
+          {source === 'vimeo'   && <F label="Vimeo ID or URL"   className="md:col-span-2"><input {...register('vimeoId')}   className={I} placeholder="123456789 or https://vimeo.com/123456789" /></F>}
           {source === 'mp4'     && <F label="MP4 URL"    className="md:col-span-2"><input {...register('mp4Url')}    className={I} placeholder="https://…/film.mp4" /></F>}
 
           <F label="Poster URL"><input {...register('poster')} className={I} /></F>

@@ -3,6 +3,7 @@ import axios from 'axios'
 import { SplitText, FadeContent, TiltedCard } from '../components/bits/index.jsx'
 import SEOHead from '../components/SEOHead.jsx'
 import { useCopy } from '../lib/copy.jsx'
+import { youtubeEmbedSrc, vimeoEmbedSrc } from '../lib/videoEmbed.js'
 
 const CATEGORY_FILTERS = ['Ad Film', 'Brand Film', 'Music Video', 'Reel', 'BTS', 'Short Film', 'Documentary']
 
@@ -123,9 +124,9 @@ export default function Reel() {
             <button onClick={() => setPlaying(null)} className="text-ink-mute hover:text-saffron text-sm tracking-[.2em] uppercase mb-4">Close ×</button>
             <div className="aspect-video bg-black border border-line">
               {playing.youtubeId
-                ? <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${playing.youtubeId}?autoplay=1`} title={playing.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+                ? <iframe className="w-full h-full" src={youtubeEmbedSrc(playing.youtubeId)} title={playing.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
                 : playing.vimeoId
-                  ? <iframe className="w-full h-full" src={`https://player.vimeo.com/video/${playing.vimeoId}?autoplay=1`} title={playing.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
+                  ? <iframe className="w-full h-full" src={vimeoEmbedSrc(playing.vimeoId)} title={playing.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
                   : playing.mp4Url
                     ? <video className="w-full h-full" src={playing.mp4Url} controls autoPlay />
                     : <div className="grid place-items-center h-full text-ink-mute">No playable source</div>}
