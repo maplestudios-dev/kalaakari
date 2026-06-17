@@ -6,11 +6,12 @@ import { youtubeEmbedSrc, vimeoEmbedSrc } from '../lib/videoEmbed.js'
 
 export default function VideoTheater({ video, onClose }) {
   if (!video) return null
+  const portrait = video.orientation === 'portrait'
   return (
     <div className="fixed inset-0 z-[100] bg-black/95 grid place-items-center p-6" onClick={onClose}>
-      <div className="w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
+      <div className={`w-full ${portrait ? 'max-w-[420px]' : 'max-w-6xl'}`} onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="text-ink-mute hover:text-saffron text-sm tracking-[.2em] uppercase mb-4">Close ×</button>
-        <div className="aspect-video bg-black border border-line">
+        <div className={`${portrait ? 'aspect-[9/16]' : 'aspect-video'} bg-black border border-line`}>
           {video.youtubeId
             ? <iframe className="w-full h-full" src={youtubeEmbedSrc(video.youtubeId)} title={video.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
             : video.vimeoId

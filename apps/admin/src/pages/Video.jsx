@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { video, portfolio, can } from '../lib/api.js'
-import { extractYouTubeId, extractVimeoId } from '../lib/videoEmbed.js'
+import { extractYouTubeId, extractVimeoId, isYouTubeShorts } from '../lib/videoEmbed.js'
+import ImageUploader from '../components/ImageUploader.jsx'
 
 const CATS = ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other']
 
@@ -68,13 +69,19 @@ export default function VideoPage() {
 
 function Drawer({ initial, onClose, onSaved }) {
   const isNew = initial._new
-  const { register, handleSubmit, control, watch, formState: { isSubmitting } } = useForm({
+  const { register, handleSubmit, control, watch, setValue, formState: { isSubmitting } } = useForm({
     defaultValues: isNew
-      ? { category: 'Ad Film', published: true, source: 'youtube' }
-      : { ...initial, source: initial.youtubeId ? 'youtube' : initial.vimeoId ? 'vimeo' : initial.mp4Url ? 'mp4' : 'youtube' }
+      ? { category: 'Ad Film', published: true, source: 'youtube', orientation: 'landscape' }
+      : { orientation: 'landscape', ...initial, source: initial.youtubeId ? 'youtube' : initial.vimeoId ? 'vimeo' : initial.mp4Url ? 'mp4' : 'youtube' }
   })
   const { fields, append, remove } = useFieldArray({ control, name: 'credits' })
   const source = watch('source')
+  const youtubeVal = watch('youtubeId')
+
+  // A pasted YouTube Shorts URL is always vertical — flip orientation for the editor.
+  useEffect(() => {
+    if (source === 'youtube' && isYouTubeShorts(youtubeVal)) setValue('orientation', 'portrait')
+  }, [youtubeVal, source, setValue])
 
   const submit = async (data) => {
     // strip the helper field + non-source IDs
@@ -122,8 +129,26 @@ function Drawer({ initial, onClose, onSaved }) {
           {source === 'vimeo'   && <F label="Vimeo ID or URL"   className="md:col-span-2"><input {...register('vimeoId')}   className={I} placeholder="123456789 or https://vimeo.com/123456789" /></F>}
           {source === 'mp4'     && <F label="MP4 URL"    className="md:col-span-2"><input {...register('mp4Url')}    className={I} placeholder="https://…/film.mp4" /></F>}
 
-          <F label="Poster URL"><input {...register('poster')} className={I} /></F>
-          <F label="Poster alt-text"><input {...register('posterAlt')} className={I} /></F>
+          <F label="Orientation" className="md:col-span-2">
+            <select {...register('orientation')} className={I}>
+              <option value="landscape">Landscape · 16:9</option>
+              <option value="portrait">Portrait · 9:16 (Shorts / Reels)</option>
+            </select>
+            <span className="block label-tag text-[10px] mt-1.5 normal-case tracking-[.1em] text-ink-mute">Auto-set to portrait when you paste a YouTube Shorts URL. Choose portrait for vertical Vimeo / MP4 clips too.</span>
+          </F>
+
+          <ImageUploader
+            className="md:col-span-2"
+            label="Poster / thumbnail"
+            help="Shown on the /reel grid and the featured film. For portrait videos use a vertical 9:16 image; otherwise 16:9."
+            field="poster"
+            aspectClass="w-40 h-24"
+            previewStyle={{ aspectRatio: '16 / 9' }}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+          <F label="Poster alt-text" className="md:col-span-2"><input {...register('posterAlt')} className={I} placeholder="Describe the thumbnail for accessibility" /></F>
           <F label="Hover preview MP4 (optional)" className="md:col-span-2"><input {...register('previewUrl')} className={I} placeholder="https://…/preview.mp4" /></F>
 
           <F label="Linked portfolio project" className="md:col-span-2">

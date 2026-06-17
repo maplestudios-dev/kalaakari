@@ -25,6 +25,19 @@ export function extractYouTubeId(input) {
   return m ? m[0] : raw
 }
 
+/** True when the input is a YouTube Shorts URL (vertical 9:16). */
+export function isYouTubeShorts(input) {
+  if (!input) return false
+  const raw = String(input).trim()
+  try {
+    const url = new URL(raw)
+    return /(^|\.)youtube\.com$/.test(url.hostname.replace(/^www\./, '')) &&
+      url.pathname.split('/').filter(Boolean)[0] === 'shorts'
+  } catch {
+    return /\/shorts\//.test(raw)
+  }
+}
+
 export function extractVimeoId(input) {
   if (!input) return ''
   const raw = String(input).trim()

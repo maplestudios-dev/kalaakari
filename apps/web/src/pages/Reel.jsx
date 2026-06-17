@@ -56,8 +56,11 @@ export default function Reel() {
             <FadeContent>
               <div className="relative aspect-video bg-bg-2 border border-line cursor-pointer group overflow-hidden"
                    onClick={() => setPlaying(featured)}>
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#2a1810] to-[#0a0805]">
-                  <span className="font-display text-[clamp(48px,8vw,140px)] text-ink-mute/10 px-6 text-center">{featured.title}</span>
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#2a1810] to-[#0a0805]"
+                     style={featured.poster ? { background: `url(${featured.poster}) center/cover no-repeat` } : undefined}>
+                  {!featured.poster && (
+                    <span className="font-display text-[clamp(48px,8vw,140px)] text-ink-mute/10 px-6 text-center">{featured.title}</span>
+                  )}
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-20 h-20 rounded-full bg-saffron grid place-items-center group-hover:scale-110 transition-transform">
@@ -94,9 +97,12 @@ export default function Reel() {
             <FadeContent key={v._id} delay={(i % 3) * 0.06}>
               <button onClick={() => setPlaying(v)} className="block w-full text-left">
                 <TiltedCard max={4}>
-                  <div className="relative aspect-video bg-bg-2 border border-line overflow-hidden hover:border-saffron transition-colors group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#2a1810] to-[#0a0805] flex items-center justify-center">
-                      <span className="font-display text-2xl md:text-3xl text-ink-mute/15 px-4 text-center">{v.title}</span>
+                  <div className={`relative ${v.orientation === 'portrait' ? 'aspect-[9/16] max-w-[300px] mx-auto' : 'aspect-video'} bg-bg-2 border border-line overflow-hidden hover:border-saffron transition-colors group`}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#2a1810] to-[#0a0805] flex items-center justify-center"
+                         style={v.poster ? { background: `url(${v.poster}) center/cover no-repeat` } : undefined}>
+                      {!v.poster && (
+                        <span className="font-display text-2xl md:text-3xl text-ink-mute/15 px-4 text-center">{v.title}</span>
+                      )}
                     </div>
                     <span className="absolute top-4 left-4 label-tag text-mustard bg-bg/80 px-2.5 py-1.5 border border-line">{v.category}</span>
                     <span className="absolute top-4 right-4 font-display text-sm text-ink-mute">{v.duration}s</span>
@@ -120,9 +126,9 @@ export default function Reel() {
       {/* Theater modal */}
       {playing && (
         <div className="fixed inset-0 z-[100] bg-black/95 grid place-items-center p-6" onClick={() => setPlaying(null)}>
-          <div className="w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
+          <div className={`w-full ${playing.orientation === 'portrait' ? 'max-w-[420px]' : 'max-w-6xl'}`} onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setPlaying(null)} className="text-ink-mute hover:text-saffron text-sm tracking-[.2em] uppercase mb-4">Close ×</button>
-            <div className="aspect-video bg-black border border-line">
+            <div className={`${playing.orientation === 'portrait' ? 'aspect-[9/16]' : 'aspect-video'} bg-black border border-line`}>
               {playing.youtubeId
                 ? <iframe className="w-full h-full" src={youtubeEmbedSrc(playing.youtubeId)} title={playing.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
                 : playing.vimeoId

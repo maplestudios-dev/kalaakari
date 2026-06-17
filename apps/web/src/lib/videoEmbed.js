@@ -51,6 +51,19 @@ export function extractVimeoId(input) {
   return m ? m[0] : ''
 }
 
+/** True when the input is a YouTube Shorts URL (which are vertical 9:16). */
+export function isYouTubeShorts(input) {
+  if (!input) return false
+  const raw = String(input).trim()
+  try {
+    const url = new URL(raw)
+    return /(^|\.)youtube\.com$/.test(url.hostname.replace(/^www\./, '')) &&
+      url.pathname.split('/').filter(Boolean)[0] === 'shorts'
+  } catch {
+    return /\/shorts\//.test(raw)
+  }
+}
+
 /** Build a YouTube embed src, or '' if no ID could be parsed. */
 export function youtubeEmbedSrc(input, { autoplay = true } = {}) {
   const id = extractYouTubeId(input)

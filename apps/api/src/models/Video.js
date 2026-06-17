@@ -16,6 +16,8 @@ const VideoSchema = new mongoose.Schema(
     youtubeId:    { type: String },
     vimeoId:      { type: String },
     mp4Url:       { type: String },
+    // playback aspect — 'portrait' renders 9:16 (e.g. YouTube Shorts / Reels)
+    orientation:  { type: String, enum: ['landscape', 'portrait'], default: 'landscape' },
     poster:       { type: String },                   // thumbnail URL
     posterAlt:    { type: String },                   // accessible alt
     previewUrl:   { type: String },                   // optional muted-loop preview MP4 for hover
