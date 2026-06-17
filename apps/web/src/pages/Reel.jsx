@@ -114,8 +114,11 @@ export default function Reel() {
                 <div className="px-1 py-4 flex justify-between items-end gap-3">
                   <div>
                     <h4 className="font-display text-xl">{v.title}</h4>
-                    <span className="label-tag mt-1 block">{v.client} · {v.year}</span>
+                    {v.year && <span className="label-tag mt-1 block">{v.year}</span>}
                   </div>
+                  {v.client && v.client !== v.title && (
+                    <span className="font-display text-xl text-ink-mute text-right leading-none shrink-0">{v.client}</span>
+                  )}
                 </div>
               </button>
             </FadeContent>

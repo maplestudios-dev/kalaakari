@@ -7,7 +7,7 @@ const PortfolioSchema = new mongoose.Schema(
     client:      { type: String },
     deva:        { type: String },
     industry:    { type: String },
-    category:    { type: String, enum: ['Branding','Campaign','Content','Digital','Performance','Production','Film','Social','Packaging','Identity'], default: 'Branding' },
+    category:    { type: String, default: 'Branding' },   // values managed via the Category CMS taxonomy
     year:        { type: Number },
     cover:       { type: String },         // 4:3 thumbnail — used on cards (Work grid, homepage, related)
     coverWide:   { type: String },         // 16:9 widescreen — used on case-study hero. Falls back to `cover`.

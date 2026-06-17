@@ -3,8 +3,10 @@ import { meStore, can } from '../lib/api.js'
 
 const linkDefs = [
   { to: '/',             label: 'Dashboard',     perm: null },
+  { to: '/homepage',     label: 'Homepage',      perm: 'copy.read' },
   { to: '/portfolio',    label: 'Portfolio',     perm: 'portfolio.read' },
   { to: '/video',        label: 'Videos',        perm: 'video.read' },
+  { to: '/categories',   label: 'Categories',    perm: 'portfolio.read' },
   { to: '/blog',         label: 'Journal',       perm: 'blog.read' },
   { to: '/testimonials', label: 'Testimonials',  perm: 'testimonials.write' },
   { to: '/press',        label: 'Press',         perm: 'press.write' },

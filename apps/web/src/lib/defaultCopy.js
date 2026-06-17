@@ -81,11 +81,11 @@ export const defaultCopy = {
       ['Team', 'Strategy · Design · Film']
     ],
     metrics: [
-      { value: 8,   suffix: '',  label: 'Years active' },
+      { value: 4,   suffix: '',  label: 'Years active' },
       { value: 42,  suffix: '+', label: 'Brands shaped' },
       { value: 180, suffix: 'M', label: 'Impressions delivered' }
     ],
-    metricsFootnote: '* Demo seed values — replace via admin dashboard.'
+    metricsFootnote: ''
   },
 
   work: {
@@ -144,7 +144,7 @@ export const defaultCopy = {
         { label: 'Performance', to: '/services' },
         { label: 'Production', to: '/services' }
       ],
-      Contact:      ['hello@kalaakaari.in','+91 11 2345 6789','Hauz Khas Village, New Delhi 110016','@kalaakaari.studio']
+      Contact:      ['business@kalaakaari.in','+91 11 2345 6789','Hauz Khas Village, New Delhi 110016','@kalaakaari.studio']
     },
     copyright: '© MMXXVI Kalaakaari Studio LLP · Made in DELHI',
     legalLinks: ['Privacy','Terms','Imprint']

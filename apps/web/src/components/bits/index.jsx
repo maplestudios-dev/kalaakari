@@ -122,6 +122,7 @@ export function CountUp({ to = 100, from = 0, duration = 1.8, suffix = '', class
   const [val, setVal] = useState(from)
   useEffect(() => {
     if (!inView) return
+    setVal(from)            // always begin from `from` (0) — never count down from a stale value
     const t0 = performance.now()
     let raf
     const step = (t) => {

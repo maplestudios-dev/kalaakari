@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { portfolio } from '../lib/api.js'
 import ImageUploader from '../components/ImageUploader.jsx'
+import { useRowDrag, reorder } from '../lib/useRowDrag.js'
 
 const CATS = ['Branding','Campaign','Content','Digital','Performance','Production','Film','Social','Packaging','Identity']
 
@@ -12,12 +13,21 @@ export default function PortfolioPage() {
   const refresh = () => portfolio.list().then(setItems)
   useEffect(() => { refresh() }, [])
 
+  const { dragProps, overIndex } = useRowDrag((from, to) => {
+    setItems((prev) => {
+      const next = reorder(prev, from, to)
+      portfolio.reorder(next.map((p) => p._id)).catch(() => refresh())
+      return next
+    })
+  })
+
   return (
     <>
       <header className="flex items-end justify-between mb-10">
         <div>
           <div className="label-tag">CMS · Portfolio</div>
           <h1 className="font-display text-5xl mt-2">Projects</h1>
+          <p className="text-ink-mute text-sm mt-2">Drag the <span className="text-mustard">⠿</span> handle to set the order projects appear on the homepage Sneak Peek and Work page.</p>
         </div>
         <button onClick={() => setEditing({})} className="px-5 py-3 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard">+ New project</button>
       </header>
@@ -26,6 +36,7 @@ export default function PortfolioPage() {
         <table className="w-full text-sm">
           <thead className="text-left label-tag border-b border-line">
             <tr>
+              <th className="p-4 w-8"></th>
               <th className="p-4 w-20">Cover</th>
               <th className="p-4">Title</th>
               <th className="p-4">Category</th>
@@ -36,8 +47,10 @@ export default function PortfolioPage() {
             </tr>
           </thead>
           <tbody>
-            {items.map((p) => (
-              <tr key={p._id} className="border-b border-line">
+            {items.map((p, i) => (
+              <tr key={p._id} {...dragProps(i)}
+                  className={`border-b border-line ${overIndex === i ? 'bg-saffron/10' : ''}`}>
+                <td className="p-4 text-center text-ink-mute cursor-grab active:cursor-grabbing select-none" title="Drag to reorder">⠿</td>
                 <td className="p-4">
                   {p.cover
                     ? <img src={p.cover} alt="" className="w-14 h-14 object-cover border border-line" loading="lazy" />
@@ -54,7 +67,7 @@ export default function PortfolioPage() {
                 </td>
               </tr>
             ))}
-            {items.length === 0 && <tr><td colSpan="7" className="p-10 text-center label-tag text-ink-mute">No projects yet. Run <code>pnpm seed</code> or click + New project.</td></tr>}
+            {items.length === 0 && <tr><td colSpan="8" className="p-10 text-center label-tag text-ink-mute">No projects yet. Run <code>pnpm seed</code> or click + New project.</td></tr>}
           </tbody>
         </table>
       </div>

@@ -1,12 +1,68 @@
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { SplitText, Magnet, ShinyText, DarkVeil } from './bits/index.jsx'
 import { useCopy } from '../lib/copy.jsx'
 
 export default function Hero() {
   const h = useCopy('hero')
+  const [slides, setSlides] = useState([])
+  const [idx, setIdx] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    const api = import.meta.env.VITE_API_URL
+    if (!api) return
+    axios.get(`${api}/homepage`)
+      .then((r) => setSlides((r.data?.homepage?.heroSlides || []).filter((s) => s.src)))
+      .catch(() => {})
+  }, [])
+
+  const total = slides.length + 1          // built-in title slide + media slides
+  const go = (i) => setIdx((i + total) % total)
+
+  useEffect(() => {
+    if (total <= 1 || paused) return
+    const t = setInterval(() => setIdx((i) => (i + 1) % total), 6000)
+    return () => clearInterval(t)
+  }, [total, paused])
 
   return (
-    <section className="relative min-h-screen pt-36 pb-20 overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden"
+             onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      {/* Slide 1 — built-in typographic hero (always present, defines height) */}
+      <div className={`transition-opacity duration-700 ${idx === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <TitleSlide h={h} />
+      </div>
+
+      {/* Extra CMS slides — full-bleed image or video */}
+      {slides.map((s, i) => (
+        <div key={i} className={`absolute inset-0 transition-opacity duration-700 ${idx === i + 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <MediaSlide slide={s} />
+        </div>
+      ))}
+
+      {total > 1 && (
+        <>
+          <button onClick={() => go(idx - 1)} aria-label="Previous slide"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 grid place-items-center rounded-full border border-line bg-bg/50 text-2xl text-ink hover:bg-saffron hover:text-bg transition-colors">‹</button>
+          <button onClick={() => go(idx + 1)} aria-label="Next slide"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 grid place-items-center rounded-full border border-line bg-bg/50 text-2xl text-ink hover:bg-saffron hover:text-bg transition-colors">›</button>
+          <div className="absolute bottom-6 inset-x-0 flex justify-center gap-2.5 z-20">
+            {Array.from({ length: total }).map((_, i) => (
+              <button key={i} onClick={() => go(i)} aria-label={`Go to slide ${i + 1}`}
+                      className={`h-2 rounded-full transition-all ${idx === i ? 'w-6 bg-saffron' : 'w-2 bg-ink-mute/40 hover:bg-ink-mute'}`} />
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  )
+}
+
+function TitleSlide({ h }) {
+  return (
+    <div className="relative min-h-screen pt-36 pb-20 overflow-hidden">
       <DarkVeil />
 
       <span className="absolute left-[-3vw] top-[5vh] font-deva pointer-events-none select-none"
@@ -75,6 +131,31 @@ export default function Hero() {
         <span>{h.bottomLeft}</span>
         <span>{h.bottomRight}</span>
       </div>
-    </section>
+    </div>
+  )
+}
+
+function MediaSlide({ slide }) {
+  const external = /^https?:/i.test(slide.ctaHref || '')
+  return (
+    <div className="relative w-full h-full min-h-screen">
+      {slide.kind === 'video'
+        ? <video src={slide.src} poster={slide.poster || undefined} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
+        : <img src={slide.src} alt={slide.alt || ''} className="absolute inset-0 w-full h-full object-cover" />}
+      <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-bg/10" />
+      {(slide.headline || slide.ctaLabel) && (
+        <div className="absolute bottom-0 inset-x-0 max-w-[1320px] mx-auto px-7 pb-24">
+          {slide.headline && <h2 className="font-display text-4xl md:text-6xl max-w-3xl leading-[.95]">{slide.headline}</h2>}
+          {slide.sub && <p className="font-serif-i text-parchment mt-4 max-w-xl text-lg">{slide.sub}</p>}
+          {slide.ctaLabel && slide.ctaHref && (
+            <Magnet>
+              {external
+                ? <a href={slide.ctaHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 mt-6 px-7 py-4 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</a>
+                : <Link to={slide.ctaHref} className="inline-flex items-center gap-3 mt-6 px-7 py-4 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</Link>}
+            </Magnet>
+          )}
+        </div>
+      )}
+    </div>
   )
 }

@@ -33,6 +33,16 @@ r.post('/', requireAuth, requirePermission('portfolio.write'), asyncHandler(asyn
   res.status(201).json({ item })
 }))
 
+// AUTHED: reorder — body { ids: [...] } sets `order` to the array position.
+// Declared before '/:id' so the literal path isn't captured as an id.
+r.put('/reorder', requireAuth, requirePermission('portfolio.write'), asyncHandler(async (req, res) => {
+  const ids = Array.isArray(req.body.ids) ? req.body.ids : []
+  if (!ids.length) { res.status(400); throw new Error('ids[] required') }
+  await Portfolio.bulkWrite(ids.map((id, i) => ({ updateOne: { filter: { _id: id }, update: { $set: { order: i } } } })))
+  await audit({ req, action: 'reorder', resource: 'portfolio', summary: `Reordered ${ids.length} projects` })
+  res.json({ ok: true })
+}))
+
 // AUTHED: update
 r.put('/:id', requireAuth, requirePermission('portfolio.write'), asyncHandler(async (req, res) => {
   const before = await Portfolio.findById(req.params.id).lean()

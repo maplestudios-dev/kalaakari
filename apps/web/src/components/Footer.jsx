@@ -34,16 +34,29 @@ export default function Footer() {
   )
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_RE = /^[+\d][\d\s-]{6,}$/
+
+function ContactItem({ value }) {
+  if (EMAIL_RE.test(value)) {
+    return <a href={`mailto:${value}`} className="hover:text-saffron transition-colors break-all">{value}</a>
+  }
+  if (PHONE_RE.test(value)) {
+    return <a href={`tel:${value.replace(/\s+/g, '')}`} className="hover:text-ink transition-colors">{value}</a>
+  }
+  return <span>{value}</span>
+}
+
 function FootCol({ title, items = [] }) {
   return (
     <div>
       <h5 className="text-[11px] tracking-[.3em] uppercase text-saffron mb-5">{title}</h5>
       <ul className="space-y-2 text-sm text-ink-mute">
         {items.map((it, i) => (
-          <li key={i} className="hover:text-ink transition-colors cursor-pointer">
+          <li key={i} className="hover:text-ink transition-colors">
             {typeof it === 'string'
-              ? it
-              : <Link to={it.to}>{it.label}</Link>}
+              ? <ContactItem value={it} />
+              : <Link to={it.to} className="cursor-pointer">{it.label}</Link>}
           </li>
         ))}
       </ul>

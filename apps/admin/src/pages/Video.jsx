@@ -3,6 +3,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { video, portfolio, can } from '../lib/api.js'
 import { extractYouTubeId, extractVimeoId, isYouTubeShorts } from '../lib/videoEmbed.js'
 import ImageUploader from '../components/ImageUploader.jsx'
+import { useRowDrag, reorder } from '../lib/useRowDrag.js'
 
 const CATS = ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other']
 
@@ -12,13 +13,21 @@ export default function VideoPage() {
   const refresh = () => video.list().then(setItems)
   useEffect(() => { refresh() }, [])
 
+  const { dragProps, overIndex } = useRowDrag((from, to) => {
+    setItems((prev) => {
+      const next = reorder(prev, from, to)
+      video.reorder(next.map((v) => v._id)).catch(() => refresh())
+      return next
+    })
+  })
+
   return (
     <>
       <header className="flex items-end justify-between mb-10">
         <div>
           <div className="label-tag">CMS · Reel</div>
           <h1 className="font-display text-5xl mt-2">Videos</h1>
-          <p className="text-ink-mute text-sm mt-2 max-w-2xl">Films, ads, brand videos and reels shown at <code className="text-mustard">/reel</code> on the public site.</p>
+          <p className="text-ink-mute text-sm mt-2 max-w-2xl">Films, ads, brand videos and reels shown at <code className="text-mustard">/reel</code> on the public site. Drag the <span className="text-mustard">⠿</span> handle to set display order.</p>
         </div>
         {can('video.write') && (
           <button onClick={() => setEditing({ _new: true })} className="px-5 py-3 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard">+ Add video</button>
@@ -29,6 +38,7 @@ export default function VideoPage() {
         <table className="w-full text-sm">
           <thead className="text-left label-tag border-b border-line">
             <tr>
+              <th className="p-4 w-8"></th>
               <th className="p-4">Title</th>
               <th className="p-4">Client</th>
               <th className="p-4">Category</th>
@@ -40,8 +50,10 @@ export default function VideoPage() {
             </tr>
           </thead>
           <tbody>
-            {items.map((v) => (
-              <tr key={v._id} className="border-b border-line">
+            {items.map((v, i) => (
+              <tr key={v._id} {...dragProps(i)}
+                  className={`border-b border-line ${overIndex === i ? 'bg-saffron/10' : ''}`}>
+                <td className="p-4 text-center text-ink-mute cursor-grab active:cursor-grabbing select-none" title="Drag to reorder">⠿</td>
                 <td className="p-4">{v.title}<span className="block label-tag text-[10px] mt-1">{v.slug}</span></td>
                 <td className="p-4 text-ink-mute">{v.client}</td>
                 <td className="p-4">{v.category}</td>
@@ -57,7 +69,7 @@ export default function VideoPage() {
                 </td>
               </tr>
             ))}
-            {items.length === 0 && <tr><td colSpan="8" className="p-10 text-center label-tag text-ink-mute">No videos yet.</td></tr>}
+            {items.length === 0 && <tr><td colSpan="9" className="p-10 text-center label-tag text-ink-mute">No videos yet.</td></tr>}
           </tbody>
         </table>
       </div>

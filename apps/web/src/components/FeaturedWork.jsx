@@ -101,7 +101,9 @@ function ProjectCard({ p, index }) {
           <h4 className="font-display text-2xl">{p.title}</h4>
           {p.deva && <span className="block font-deva text-mustard text-xs mt-1.5">{p.deva}</span>}
         </div>
-        <span className="label-tag">{p.category}</span>
+        {p.client && p.client !== p.title && (
+          <span className="font-display text-2xl text-ink-mute text-right leading-none shrink-0">{p.client}</span>
+        )}
       </div>
     </Link>
   )

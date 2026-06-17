@@ -9,7 +9,7 @@ const VideoSchema = new mongoose.Schema(
     // Optional link to a portfolio project — used for "related reels" on the
     // case study page and to power the homepage reel-by-work pairing.
     project:      { type: mongoose.Schema.Types.ObjectId, ref: 'PortfolioProject' },
-    category:     { type: String, enum: ['Ad Film','Brand Film','Music Video','Reel','BTS','Short Film','Documentary','Other'], default: 'Ad Film' },
+    category:     { type: String, default: 'Ad Film' },   // values managed via the Category CMS taxonomy
     duration:     { type: Number },                  // seconds
     year:         { type: Number },
     // primary playback source — exactly one of these

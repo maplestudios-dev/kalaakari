@@ -30,7 +30,21 @@ export const portfolio = {
   list:   () => api.get('/portfolio').then((r) => r.data.items),
   create: (data) => api.post('/portfolio', data).then((r) => r.data.item),
   update: (id, data) => api.put(`/portfolio/${id}`, data).then((r) => r.data.item),
-  remove: (id) => api.delete(`/portfolio/${id}`)
+  remove: (id) => api.delete(`/portfolio/${id}`),
+  reorder: (ids) => api.put('/portfolio/reorder', { ids }).then((r) => r.data)
+}
+
+export const homepage = {
+  get:  () => api.get('/homepage').then((r) => r.data.homepage),
+  save: (data) => api.put('/homepage', data).then((r) => r.data.homepage)
+}
+
+export const categories = {
+  list:    (type) => api.get('/categories', { params: type ? { type } : {} }).then((r) => r.data.items),
+  create:  (type, name) => api.post('/categories', { type, name }).then((r) => r.data.item),
+  rename:  (id, name) => api.put(`/categories/${id}`, { name }).then((r) => r.data.item),
+  remove:  (id) => api.delete(`/categories/${id}`),
+  reorder: (ids) => api.put('/categories/reorder', { ids }).then((r) => r.data)
 }
 
 export const contact = {
@@ -64,7 +78,8 @@ export const video = {
   list:   () => api.get('/video').then((r) => r.data.items),
   create: (data) => api.post('/video', data).then((r) => r.data.item),
   update: (id, data) => api.put(`/video/${id}`, data).then((r) => r.data.item),
-  remove: (id) => api.delete(`/video/${id}`)
+  remove: (id) => api.delete(`/video/${id}`),
+  reorder: (ids) => api.put('/video/reorder', { ids }).then((r) => r.data)
 }
 
 export const seo = {

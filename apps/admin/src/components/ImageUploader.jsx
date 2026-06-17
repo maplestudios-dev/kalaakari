@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { media } from '../lib/api.js'
 
 const I = 'w-full bg-transparent border border-line py-2.5 px-3 text-ink outline-none focus:border-saffron'
+const isVideo = (url = '') => /\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)
 
 /**
  * Reusable image upload widget — preview, upload button, optional URL paste.
@@ -35,8 +36,10 @@ export default function ImageUploader({
         {/* Preview */}
         <div className="shrink-0">
           {value
-            ? <img src={value} alt={`${field} preview`} className={`${aspectClass} object-cover border border-line`} style={previewStyle} />
-            : <div className={`${aspectClass} grid place-items-center border border-line text-ink-mute label-tag text-[10px] bg-bg`} style={previewStyle}>No image</div>}
+            ? (isVideo(value)
+                ? <video src={value} muted loop playsInline className={`${aspectClass} object-cover border border-line`} style={previewStyle} />
+                : <img src={value} alt={`${field} preview`} className={`${aspectClass} object-cover border border-line`} style={previewStyle} />)
+            : <div className={`${aspectClass} grid place-items-center border border-line text-ink-mute label-tag text-[10px] bg-bg`} style={previewStyle}>No media</div>}
         </div>
 
         <div className="flex-1 space-y-3">

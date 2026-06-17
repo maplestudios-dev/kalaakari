@@ -2,6 +2,8 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Login from './pages/Login.jsx'
 import AcceptInvite from './pages/AcceptInvite.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import HomepagePage from './pages/Homepage.jsx'
+import CategoriesPage from './pages/Categories.jsx'
 import PortfolioPage from './pages/Portfolio.jsx'
 import Submissions from './pages/Submissions.jsx'
 import UsersPage from './pages/Users.jsx'
@@ -28,7 +30,9 @@ export default function App() {
       <Route path="/accept-invite" element={<AcceptInvite />} />
       <Route element={<Protected><Shell /></Protected>}>
         <Route path="/"              element={<Dashboard />} />
+        <Route path="/homepage"      element={<HomepagePage />} />
         <Route path="/portfolio"     element={<PortfolioPage />} />
+        <Route path="/categories"    element={<CategoriesPage />} />
         <Route path="/video"         element={<VideoPage />} />
         <Route path="/blog"          element={<BlogPage />} />
         <Route path="/testimonials"  element={<TestimonialsPage />} />

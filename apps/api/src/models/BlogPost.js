@@ -7,7 +7,7 @@ const BlogSchema = new mongoose.Schema(
     excerpt:     { type: String },
     body:        { type: String },
     cover:       { type: String },
-    category:    { type: String, enum: ['Branding','Campaign Thinking','Cultural Strategy','Content & Social','Design','Advertising','Performance Creative','Studio Notes'], default: 'Studio Notes' },
+    category:    { type: String, default: 'Studio Notes' },   // values managed via the Category CMS taxonomy
     author:      { type: String, default: 'Kalaakaari Studio' },
     seo: {
       title: String,

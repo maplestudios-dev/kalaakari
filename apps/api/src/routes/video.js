@@ -35,6 +35,16 @@ r.post('/', requireAuth, requirePermission('video.write'), asyncHandler(async (r
   res.status(201).json({ item })
 }))
 
+// AUTHED: reorder — body { ids: [...] } sets `order` to the array position.
+// Declared before '/:id' so the literal path isn't captured as an id.
+r.put('/reorder', requireAuth, requirePermission('video.write'), asyncHandler(async (req, res) => {
+  const ids = Array.isArray(req.body.ids) ? req.body.ids : []
+  if (!ids.length) { res.status(400); throw new Error('ids[] required') }
+  await Video.bulkWrite(ids.map((id, i) => ({ updateOne: { filter: { _id: id }, update: { $set: { order: i } } } })))
+  await audit({ req, action: 'reorder', resource: 'video', summary: `Reordered ${ids.length} videos` })
+  res.json({ ok: true })
+}))
+
 r.put('/:id', requireAuth, requirePermission('video.write'), asyncHandler(async (req, res) => {
   const item = await Video.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
   if (!item) { res.status(404); throw new Error('Not found') }
