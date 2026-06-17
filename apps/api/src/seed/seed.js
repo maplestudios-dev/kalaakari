@@ -120,9 +120,9 @@ async function run() {
 
   // ── Videos (reel) ──
   const seedVideos = [
-    { title: 'Namkeen Republic — Launch Film', slug: 'namkeen-republic-launch', client: 'Namkeen Republic', category: 'Ad Film', year: 2025, duration: 47, youtubeId: 'dQw4w9WgXcQ', excerpt: 'A 47-second hook for a snack disruptor.', featured: true, tags: ['campaign','launch','food'] },
-    { title: 'Aroha — The Heirloom', slug: 'aroha-heirloom', client: 'Aroha Jewels', category: 'Brand Film', year: 2024, duration: 90, youtubeId: 'dQw4w9WgXcQ', excerpt: 'A film about what we pass down.', tags: ['craft','heritage'] },
-    { title: 'Hauz Khas Collective — Identity Reel', slug: 'hkc-identity-reel', client: 'HKC', category: 'Reel', year: 2025, duration: 22, youtubeId: 'dQw4w9WgXcQ', excerpt: 'Identity in motion.', tags: ['branding','motion'] }
+    { title: 'Namkeen Republic — Launch Film', slug: 'namkeen-republic-launch', client: 'Namkeen Republic', category: 'Ad Film', year: 2025, duration: 47, youtubeId: '', excerpt: 'A 47-second hook for a snack disruptor.', featured: true, tags: ['campaign','launch','food'] },
+    { title: 'Aroha — The Heirloom', slug: 'aroha-heirloom', client: 'Aroha Jewels', category: 'Brand Film', year: 2024, duration: 90, youtubeId: '', excerpt: 'A film about what we pass down.', tags: ['craft','heritage'] },
+    { title: 'Hauz Khas Collective — Identity Reel', slug: 'hkc-identity-reel', client: 'HKC', category: 'Reel', year: 2025, duration: 22, youtubeId: '', excerpt: 'Identity in motion.', tags: ['branding','motion'] }
   ]
   for (const v of seedVideos) await Video.findOneAndUpdate({ slug: v.slug }, v, { upsert: true })
   console.log(`✓ seeded ${seedVideos.length} videos`)

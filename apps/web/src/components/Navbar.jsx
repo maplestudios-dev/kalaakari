@@ -8,8 +8,18 @@ export default function Navbar() {
   const [egg, setEgg] = useState(false)
   const nav = useCopy('nav') || {}
   const meta = useCopy('meta') || {}
-  const links = nav.links || []
   const cta = nav.cta || { label: 'Contact →', to: '/contact' }
+
+  // Ensure the Picks/Recommendations link is always present, even if the
+  // stored Site Copy predates it. Inserted just before Careers.
+  const rawLinks = nav.links || []
+  const links = rawLinks.some((l) => l.to === '/recommendations')
+    ? rawLinks
+    : (() => {
+        const picks = { to: '/recommendations', label: 'Picks' }
+        const i = rawLinks.findIndex((l) => l.to === '/careers')
+        return i === -1 ? [...rawLinks, picks] : [...rawLinks.slice(0, i), picks, ...rawLinks.slice(i)]
+      })()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -40,7 +50,7 @@ export default function Navbar() {
           <button type="button" onClick={() => setEgg(true)} className="font-deva text-[13px] text-ink-mute hover:text-mustard transition-colors">{meta.siteNameDeva || 'कलाकारी'}</button>
         </div>
 
-        <div className="hidden md:flex gap-9 items-center">
+        <div className="hidden lg:flex gap-6 xl:gap-9 items-center">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -58,13 +68,13 @@ export default function Navbar() {
 
         <Link
           to={cta.to}
-          className="hidden md:inline-flex px-4 py-2.5 border border-line text-[11px] tracking-[.18em] uppercase hover:bg-saffron hover:border-saffron hover:text-bg transition-colors duration-300"
+          className="hidden lg:inline-flex px-4 py-2.5 border border-line text-[11px] tracking-[.18em] uppercase hover:bg-saffron hover:border-saffron hover:text-bg transition-colors duration-300"
         >
           {cta.label}
         </Link>
 
         <button
-          className="md:hidden text-[11px] tracking-[.24em] uppercase px-3 py-2 border border-line"
+          className="lg:hidden text-[11px] tracking-[.24em] uppercase px-3 py-2 border border-line"
           onClick={() => setOpen((o) => !o)}
         >
           {open ? 'Close' : 'Menu'}
@@ -72,7 +82,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-line bg-bg-2 px-7 py-6 flex flex-col gap-5">
+        <div className="lg:hidden border-t border-line bg-bg-2 px-7 py-6 flex flex-col gap-5">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -83,6 +93,13 @@ export default function Navbar() {
               {l.label}
             </NavLink>
           ))}
+          <Link
+            to={cta.to}
+            onClick={() => setOpen(false)}
+            className="mt-2 inline-flex w-fit px-4 py-3 border border-saffron text-saffron text-[12px] tracking-[.18em] uppercase"
+          >
+            {cta.label}
+          </Link>
         </div>
       )}
 

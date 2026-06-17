@@ -7,6 +7,7 @@ const linkDefs = [
   { to: '/portfolio',    label: 'Portfolio',     perm: 'portfolio.read' },
   { to: '/video',        label: 'Videos',        perm: 'video.read' },
   { to: '/categories',   label: 'Categories',    perm: 'portfolio.read' },
+  { to: '/services',     label: 'Services',      perm: 'copy.read' },
   { to: '/blog',         label: 'Journal',       perm: 'blog.read' },
   { to: '/careers',      label: 'Careers',       perm: 'blog.read' },
   { to: '/recommendations', label: 'Recommendations', perm: 'blog.read' },

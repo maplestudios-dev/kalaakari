@@ -8,9 +8,9 @@ import { youtubeEmbedSrc, vimeoEmbedSrc, posterFor } from '../lib/videoEmbed.js'
 const CATEGORY_FILTERS = ['Ad Film', 'Brand Film', 'Music Video', 'Reel', 'BTS', 'Short Film', 'Documentary']
 
 const DEMO = [
-  { _id: '1', title: 'Namkeen Republic — Launch Film', client: 'Namkeen Republic', category: 'Ad Film', year: 2025, duration: 47, youtubeId: 'dQw4w9WgXcQ', excerpt: 'A 47-second hook for a snack disruptor.', featured: true },
-  { _id: '2', title: 'Aroha — The Heirloom', client: 'Aroha Jewels', category: 'Brand Film', year: 2024, duration: 90, youtubeId: 'dQw4w9WgXcQ', excerpt: 'A film about what we pass down.' },
-  { _id: '3', title: 'Hauz Khas Collective — Identity Reel', client: 'HKC', category: 'Reel', year: 2025, duration: 22, youtubeId: 'dQw4w9WgXcQ', excerpt: 'Identity in motion.' }
+  { _id: '1', title: 'Namkeen Republic — Launch Film', client: 'Namkeen Republic', category: 'Ad Film', year: 2025, duration: 47, youtubeId: '', excerpt: 'A 47-second hook for a snack disruptor.', featured: true },
+  { _id: '2', title: 'Aroha — The Heirloom', client: 'Aroha Jewels', category: 'Brand Film', year: 2024, duration: 90, youtubeId: '', excerpt: 'A film about what we pass down.' },
+  { _id: '3', title: 'Hauz Khas Collective — Identity Reel', client: 'HKC', category: 'Reel', year: 2025, duration: 22, youtubeId: '', excerpt: 'Identity in motion.' }
 ]
 
 export default function Reel() {

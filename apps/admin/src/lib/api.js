@@ -127,6 +127,14 @@ export const recommendations = {
   reorder: (ids) => api.put('/recommendations/reorder', { ids }).then((r) => r.data)
 }
 
+export const services = {
+  list:   () => api.get('/services/all').then((r) => r.data.items),
+  create: (data) => api.post('/services', data).then((r) => r.data.item),
+  update: (id, data) => api.put(`/services/${id}`, data).then((r) => r.data.item),
+  remove: (id) => api.delete(`/services/${id}`),
+  reorder: (ids) => api.put('/services/reorder', { ids }).then((r) => r.data)
+}
+
 export const media = {
   upload(file, onProgress) {
     const fd = new FormData()

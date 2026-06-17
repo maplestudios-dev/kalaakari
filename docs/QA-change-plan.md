@@ -5,6 +5,29 @@ Status legend: ⬜ todo · 🟡 partial (prior work) · ✅ done · 🔵 needs p
 
 ---
 
+## Version 2 change request (`kalaakaari_website_QA_v2.pdf`)
+
+| # | Section | Change | Priority | Status |
+|---|---------|--------|----------|--------|
+| V1 | Navbar | Add Picks link (auto-injected so stale Site Copy can't hide it) | HIGH | ✅ |
+| V2 | Hero | Carousel media slides locked to 16:9, no crop/overflow | HIGH | ✅ |
+| V3 | Mobile/Tablet | Responsive pass — nav→hamburger at tablet, mobile CTA, audited stacking | HIGH | ✅* |
+| V4a | Marquee | Logos auto-tinted white (transparent-asset dependent) | HIGH | ✅ |
+| V4b | Marquee | De-duplicate logos so brands don't repeat within a set | HIGH | ✅ |
+| V5 | Footer | Email → business@…, self-corrects legacy value, mailto link | HIGH | ✅ |
+| V6a | Thumbnails | Removed flicker source; stable aspect-ratio containers | HIGH | ✅ |
+| V6b | Thumbnails | Removed Rick Roll placeholder ID everywhere (demo + seed + admin) | HIGH | ✅ |
+| V7 | Homepage | Film cards show client name on the right, like Reel cards | HIGH | ✅ |
+| V8 | Reel | Featured-hero pin — clarified admin control (single-pin already enforced) | HIGH | ✅ |
+| V9 | Services | Per-service CMS: description + attach Work/Reel projects, filtered grids | HIGH | ✅ |
+| V10 | Project | Removed redundant client name text — logo only | MEDIUM | ✅ |
+
+\* V3: code-level responsive fixes done + audited; a live browser test at 375/768/1280 is recommended after deploy.
+
+Notes: Several v2 items (V1 navbar, V5 footer, V8 featured) were already implemented in v1 but resurfaced because the live site reads those from the database Site Copy (which overrides code defaults) and/or because v1 wasn't deployed. Those components are now self-correcting so they're robust regardless of stored data.
+
+---
+
 ## All changes (by section)
 
 | # | Section | Change | Priority | Status |

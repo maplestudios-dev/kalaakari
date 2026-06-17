@@ -38,13 +38,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^[+\d][\d\s-]{6,}$/
 
 function ContactItem({ value }) {
-  if (EMAIL_RE.test(value)) {
-    return <a href={`mailto:${value}`} className="hover:text-saffron transition-colors break-all">{value}</a>
+  // Self-correct the legacy address even if stored Site Copy still has it.
+  const v = value === 'hello@kalaakaari.in' ? 'business@kalaakaari.in' : value
+  if (EMAIL_RE.test(v)) {
+    return <a href={`mailto:${v}`} className="hover:text-saffron transition-colors break-all">{v}</a>
   }
-  if (PHONE_RE.test(value)) {
-    return <a href={`tel:${value.replace(/\s+/g, '')}`} className="hover:text-ink transition-colors">{value}</a>
+  if (PHONE_RE.test(v)) {
+    return <a href={`tel:${v.replace(/\s+/g, '')}`} className="hover:text-ink transition-colors">{v}</a>
   }
-  return <span>{value}</span>
+  return <span>{v}</span>
 }
 
 function FootCol({ title, items = [] }) {

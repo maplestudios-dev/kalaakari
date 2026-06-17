@@ -8,9 +8,9 @@ import { useCopy } from '../lib/copy.jsx'
 import { posterFor } from '../lib/videoEmbed.js'
 
 const DEMO = [
-  { _id: 'rd1', slug: 'namkeen-republic-launch', title: 'Namkeen Republic — Launch Film', category: 'Ad Film', year: 2025, duration: 47, youtubeId: 'dQw4w9WgXcQ' },
-  { _id: 'rd2', slug: 'aroha-heirloom',          title: 'Aroha — The Heirloom',           category: 'Brand Film', year: 2024, duration: 90, youtubeId: 'dQw4w9WgXcQ' },
-  { _id: 'rd3', slug: 'hkc-identity-reel',       title: 'Hauz Khas Collective — Identity Reel', category: 'Reel', year: 2025, duration: 22, youtubeId: 'dQw4w9WgXcQ' }
+  { _id: 'rd1', slug: 'namkeen-republic-launch', title: 'Namkeen Republic — Launch Film', category: 'Ad Film', year: 2025, duration: 47, youtubeId: '' },
+  { _id: 'rd2', slug: 'aroha-heirloom',          title: 'Aroha — The Heirloom',           category: 'Brand Film', year: 2024, duration: 90, youtubeId: '' },
+  { _id: 'rd3', slug: 'hkc-identity-reel',       title: 'Hauz Khas Collective — Identity Reel', category: 'Reel', year: 2025, duration: 22, youtubeId: '' }
 ]
 
 export default function HomepageReel() {
@@ -71,9 +71,14 @@ export default function HomepageReel() {
                   </div>
                 </div>
               </TiltedCard>
-              <div className="px-1 py-4">
-                <h4 className="font-display text-xl">{v.title}</h4>
-                {v.client && <span className="label-tag mt-1 block">{v.client} · {v.year}</span>}
+              <div className="px-1 py-4 flex justify-between items-end gap-3">
+                <div>
+                  <h4 className="font-display text-xl">{v.title}</h4>
+                  {v.year && <span className="label-tag mt-1 block">{v.year}</span>}
+                </div>
+                {v.client && v.client !== v.title && (
+                  <span className="font-display text-xl text-ink-mute text-right leading-none shrink-0">{v.client}</span>
+                )}
               </div>
             </button>
           </FadeContent>

@@ -16,6 +16,7 @@ import PressPage from './pages/Press.jsx'
 import BlogPage from './pages/Blog.jsx'
 import CareersPage from './pages/Careers.jsx'
 import RecommendationsPage from './pages/Recommendations.jsx'
+import ServicesPage from './pages/Services.jsx'
 import Shell from './components/Shell.jsx'
 
 function Protected({ children }) {
@@ -33,6 +34,7 @@ export default function App() {
       <Route element={<Protected><Shell /></Protected>}>
         <Route path="/"              element={<Dashboard />} />
         <Route path="/homepage"      element={<HomepagePage />} />
+        <Route path="/services"      element={<ServicesPage />} />
         <Route path="/portfolio"     element={<PortfolioPage />} />
         <Route path="/categories"    element={<CategoriesPage />} />
         <Route path="/video"         element={<VideoPage />} />

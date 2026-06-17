@@ -26,7 +26,11 @@ export default function BrandsTicker() {
   }, [])
 
   const useLogos = logos.length > 0
-  const base = useLogos ? logos : tokens
+  // De-duplicate the source so the same brand never repeats within one set
+  // (the single trailing copy below is only to make the scroll seamless).
+  const base = useLogos
+    ? logos.filter((b, i, a) => a.findIndex((x) => (x.logo || x.name) === (b.logo || b.name)) === i)
+    : tokens.filter((t, i, a) => a.indexOf(t) === i)
   const row = [...base, ...base]
 
   useEffect(() => {

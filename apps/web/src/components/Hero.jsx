@@ -138,24 +138,29 @@ function TitleSlide({ h }) {
 function MediaSlide({ slide }) {
   const external = /^https?:/i.test(slide.ctaHref || '')
   return (
-    <div className="relative w-full h-full min-h-screen">
-      {slide.kind === 'video'
-        ? <video src={slide.src} poster={slide.poster || undefined} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
-        : <img src={slide.src} alt={slide.alt || ''} className="absolute inset-0 w-full h-full object-cover" />}
-      <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-bg/10" />
-      {(slide.headline || slide.ctaLabel) && (
-        <div className="absolute bottom-0 inset-x-0 max-w-[1320px] mx-auto px-7 pb-24">
-          {slide.headline && <h2 className="font-display text-4xl md:text-6xl max-w-3xl leading-[.95]">{slide.headline}</h2>}
-          {slide.sub && <p className="font-serif-i text-parchment mt-4 max-w-xl text-lg">{slide.sub}</p>}
-          {slide.ctaLabel && slide.ctaHref && (
-            <Magnet>
-              {external
-                ? <a href={slide.ctaHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 mt-6 px-7 py-4 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</a>
-                : <Link to={slide.ctaHref} className="inline-flex items-center gap-3 mt-6 px-7 py-4 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</Link>}
-            </Magnet>
+    <div className="w-full min-h-screen flex items-center justify-center px-4 sm:px-7 pt-28 pb-16">
+      {/* Fixed 16:9 frame — media fills it without distorting the page layout */}
+      <div className="w-full max-w-[1280px] mx-auto">
+        <div className="relative w-full aspect-video overflow-hidden border border-line bg-black">
+          {slide.kind === 'video'
+            ? <video src={slide.src} poster={slide.poster || undefined} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
+            : <img src={slide.src} alt={slide.alt || ''} className="absolute inset-0 w-full h-full object-cover" />}
+          <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-bg/20 to-transparent" />
+          {(slide.headline || slide.ctaLabel) && (
+            <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
+              {slide.headline && <h2 className="font-display text-3xl md:text-5xl max-w-2xl leading-[.95]">{slide.headline}</h2>}
+              {slide.sub && <p className="font-serif-i text-parchment mt-3 max-w-xl text-base md:text-lg">{slide.sub}</p>}
+              {slide.ctaLabel && slide.ctaHref && (
+                <Magnet>
+                  {external
+                    ? <a href={slide.ctaHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 mt-5 px-6 py-3.5 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</a>
+                    : <Link to={slide.ctaHref} className="inline-flex items-center gap-3 mt-5 px-6 py-3.5 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard transition-colors">{slide.ctaLabel}</Link>}
+                </Magnet>
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   )
 }

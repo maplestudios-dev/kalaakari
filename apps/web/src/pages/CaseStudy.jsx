@@ -105,13 +105,12 @@ export default function CaseStudy() {
             {item.industry && <span className="label-tag">{item.industry}</span>}
           </div>
 
-          {/* Client identity — immediately visible above the fold */}
+          {/* Client identity — logo alone when available; name only as fallback */}
           {(item.clientLogo || item.client) && (
-            <div className="mt-7 flex items-center gap-4">
+            <div className="mt-7">
               {item.clientLogo
                 ? <img src={item.clientLogo} alt={item.client || 'Client'} className="h-12 md:h-16 w-auto object-contain" />
                 : <span className="font-display text-3xl md:text-5xl text-ink">{item.client}</span>}
-              {item.clientLogo && item.client && <span className="label-tag text-ink-mute">{item.client}</span>}
             </div>
           )}
 

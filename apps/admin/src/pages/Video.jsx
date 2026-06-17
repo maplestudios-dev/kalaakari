@@ -139,7 +139,7 @@ function Drawer({ initial, onClose, onSaved }) {
               <option value="mp4">MP4 URL</option>
             </select>
           </F>
-          {source === 'youtube' && <F label="YouTube ID or URL" className="md:col-span-2"><input {...register('youtubeId')} className={I} placeholder="dQw4w9WgXcQ or https://youtu.be/dQw4w9WgXcQ" /></F>}
+          {source === 'youtube' && <F label="YouTube ID or URL" className="md:col-span-2"><input {...register('youtubeId')} className={I} placeholder="e.g. aBcDeFgHiJk or https://youtu.be/aBcDeFgHiJk" /></F>}
           {source === 'vimeo'   && <F label="Vimeo ID or URL"   className="md:col-span-2"><input {...register('vimeoId')}   className={I} placeholder="123456789 or https://vimeo.com/123456789" /></F>}
           {source === 'mp4'     && <F label="MP4 URL"    className="md:col-span-2"><input {...register('mp4Url')}    className={I} placeholder="https://…/film.mp4" /></F>}
 
@@ -195,7 +195,10 @@ function Drawer({ initial, onClose, onSaved }) {
             />
           </F>
 
-          <label className="flex items-center gap-2"><input type="checkbox" {...register('featured')} /> <span className="label-tag">Featured</span></label>
+          <label className="flex items-start gap-2 md:col-span-2">
+            <input type="checkbox" {...register('featured')} className="mt-1" />
+            <span className="label-tag">Set as Reel hero <span className="block normal-case tracking-[.08em] text-[10px] text-ink-mute mt-0.5">Pins this video as the large featured player at the top of /reel. Only one video can be the hero — setting this unpins any other.</span></span>
+          </label>
           <label className="flex items-center gap-2"><input type="checkbox" {...register('published')} defaultChecked={initial.published ?? true} /> <span className="label-tag">Published</span></label>
         </div>
 
