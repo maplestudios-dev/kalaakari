@@ -16,6 +16,7 @@ import homepageRoutes from './routes/homepage.js'
 import categoryRoutes from './routes/categories.js'
 import recommendationRoutes from './routes/recommendations.js'
 import serviceRoutes from './routes/services.js'
+import pageRoutes from './routes/pages.js'
 import usersRoutes from './routes/users.js'
 import auditRoutes from './routes/audit.js'
 import siteCopyRoutes from './routes/siteCopy.js'
@@ -54,6 +55,7 @@ app.use('/api/homepage',     homepageRoutes)
 app.use('/api/categories',   categoryRoutes)
 app.use('/api/recommendations', recommendationRoutes)
 app.use('/api/services',     serviceRoutes)
+app.use('/api/pages',        pageRoutes)
 
 // new modules
 app.use('/api/users',        usersRoutes)

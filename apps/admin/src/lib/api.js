@@ -23,7 +23,15 @@ api.interceptors.response.use(
 
 export const auth = {
   login: (email, password) => api.post('/auth/login', { email, password }).then((r) => r.data),
-  me:    () => api.get('/auth/me').then((r) => r.data)
+  me:    () => api.get('/auth/me').then((r) => r.data),
+  changePassword: (currentPassword, newPassword) => api.post('/auth/change-password', { currentPassword, newPassword }).then((r) => r.data)
+}
+
+export const pages = {
+  list:   () => api.get('/pages').then((r) => r.data.items),
+  create: (data) => api.post('/pages', data).then((r) => r.data.item),
+  update: (id, data) => api.put(`/pages/${id}`, data).then((r) => r.data.item),
+  remove: (id) => api.delete(`/pages/${id}`)
 }
 
 export const portfolio = {

@@ -47,4 +47,23 @@ r.get('/me', requireAuth, asyncHandler(async (req, res) => {
   })
 }))
 
+// Change your own password — verifies the current one first.
+r.post('/change-password', requireAuth, asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body || {}
+  if (!currentPassword || !newPassword) { res.status(400); throw new Error('Current and new password are required') }
+  if (String(newPassword).length < 8) { res.status(400); throw new Error('New password must be at least 8 characters') }
+
+  const user = await User.findById(req.user.id)
+  if (!user || !user.passwordHash) { res.status(404); throw new Error('Account not found') }
+
+  const ok = await bcrypt.compare(currentPassword, user.passwordHash)
+  if (!ok) { res.status(401); throw new Error('Current password is incorrect') }
+
+  user.passwordHash = await bcrypt.hash(newPassword, 10)
+  await user.save()
+  await audit({ req, action: 'password-change', resource: 'users', resourceId: String(user._id), summary: `${user.email} changed their password` })
+
+  res.json({ ok: true })
+}))
+
 export default r

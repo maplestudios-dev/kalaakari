@@ -17,6 +17,7 @@ import Press from './pages/Press.jsx'
 import Journal from './pages/Journal.jsx'
 import JournalPost from './pages/JournalPost.jsx'
 import Recommendations from './pages/Recommendations.jsx'
+import CustomPage from './pages/CustomPage.jsx'
 
 export default function App() {
   return (
@@ -40,6 +41,8 @@ export default function App() {
           <Route path="/press"         element={<Press />} />
           <Route path="/recommendations" element={<Recommendations />} />
           <Route path="/contact"       element={<Contact />} />
+          {/* Custom CMS-hosted pages — must stay last so real routes win */}
+          <Route path="/:slug"         element={<CustomPage />} />
         </Routes>
       </main>
       <Footer />

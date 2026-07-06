@@ -8,6 +8,7 @@ const linkDefs = [
   { to: '/video',        label: 'Videos',        perm: 'video.read' },
   { to: '/categories',   label: 'Categories',    perm: 'portfolio.read' },
   { to: '/services',     label: 'Services',      perm: 'copy.read' },
+  { to: '/pages',        label: 'Custom Pages',  perm: 'copy.read' },
   { to: '/blog',         label: 'Journal',       perm: 'blog.read' },
   { to: '/careers',      label: 'Careers',       perm: 'blog.read' },
   { to: '/recommendations', label: 'Recommendations', perm: 'blog.read' },
@@ -17,7 +18,8 @@ const linkDefs = [
   { to: '/copy',         label: 'Site Copy',     perm: 'copy.read' },
   { to: '/seo',          label: 'SEO',           perm: 'seo.read' },
   { to: '/users',        label: 'Team',          perm: 'users.read' },
-  { to: '/audit',        label: 'Audit Log',     perm: 'audit.read' }
+  { to: '/audit',        label: 'Audit Log',     perm: 'audit.read' },
+  { to: '/settings',     label: 'Account',       perm: null }
 ]
 
 export default function Shell() {
