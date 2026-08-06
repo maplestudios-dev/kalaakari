@@ -4,6 +4,14 @@ import { pages } from '../lib/api.js'
 
 const slugify = (s = '') => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
+// Keep in sync with MAX_HTML_BYTES in apps/api/src/routes/pages.js
+const MAX_HTML_BYTES = 15 * 1024 * 1024
+// UTF-8 bytes, not string.length — that counts UTF-16 units and undercounts
+// anything non-ASCII, which is exactly what the server measures differently.
+const byteLen = (s = '') => new TextEncoder().encode(s).length
+const fmtSize = (b) => (b >= 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${(b / 1024).toFixed(1)} KB`)
+const TOO_BIG_HINT = 'Move large inlined images to the media library and reference them by URL.'
+
 export default function PagesPage() {
   const [items, setItems] = useState([])
   const [editing, setEditing] = useState(null)
@@ -16,7 +24,7 @@ export default function PagesPage() {
         <div>
           <div className="label-tag">CMS · Custom pages</div>
           <h1 className="font-display text-5xl mt-2">Pages</h1>
-          <p className="text-ink-mute text-sm mt-2 max-w-2xl">Host standalone HTML pages (proposals, landing pages) at a custom URL — e.g. <code className="text-mustard">kalaakaari.in/free-period-dps</code>. Upload an HTML file or paste the markup.</p>
+          <p className="text-ink-mute text-sm mt-2 max-w-2xl">Host standalone HTML pages (proposals, landing pages) at a custom URL — e.g. <code className="text-mustard">kalaakaari.in/free-period-dps</code>. Upload an HTML file or paste the markup — up to {fmtSize(MAX_HTML_BYTES)} per page.</p>
         </div>
         <button onClick={() => setEditing({ _new: true })} className="px-5 py-3 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard">+ New page</button>
       </header>
@@ -67,8 +75,16 @@ function Drawer({ initial, onClose, onSaved }) {
   const slug = watch('slug')
   const html = watch('html')
 
+  const htmlBytes = byteLen(html || '')
+  const overLimit = htmlBytes > MAX_HTML_BYTES
+
   const onFile = (file) => {
     if (!file) return
+    if (file.size > MAX_HTML_BYTES) {
+      setErr(`"${file.name}" is ${fmtSize(file.size)} — the maximum is ${fmtSize(MAX_HTML_BYTES)}. ${TOO_BIG_HINT}`)
+      return
+    }
+    setErr(null)
     const reader = new FileReader()
     reader.onload = () => setValue('html', String(reader.result || ''), { shouldDirty: true })
     reader.readAsText(file)
@@ -76,6 +92,13 @@ function Drawer({ initial, onClose, onSaved }) {
 
   const submit = async (data) => {
     setErr(null)
+    // Check before the upload, so an oversized page fails instantly instead of
+    // after pushing megabytes over the wire only to come back 413.
+    const bytes = byteLen(data.html || '')
+    if (bytes > MAX_HTML_BYTES) {
+      setErr(`Page HTML is ${fmtSize(bytes)} — the maximum is ${fmtSize(MAX_HTML_BYTES)}. ${TOO_BIG_HINT}`)
+      return
+    }
     const payload = { ...data, slug: slugify(data.slug || data.title || '') }
     try {
       if (isNew) await pages.create(payload)
@@ -107,7 +130,11 @@ function Drawer({ initial, onClose, onSaved }) {
             <div className="flex items-center justify-between mb-1.5">
               <span className="label-tag">HTML content</span>
               <div className="flex items-center gap-3">
-                {html && <span className="label-tag text-[10px] text-mustard normal-case tracking-[.08em]">{(html.length / 1024).toFixed(1)} KB loaded</span>}
+                {html && (
+                  <span className={`label-tag text-[10px] normal-case tracking-[.08em] ${overLimit ? 'text-saffron' : 'text-mustard'}`}>
+                    {fmtSize(htmlBytes)} {overLimit ? `— over the ${fmtSize(MAX_HTML_BYTES)} limit` : `of ${fmtSize(MAX_HTML_BYTES)}`}
+                  </span>
+                )}
                 <input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
                 <button type="button" onClick={() => fileRef.current?.click()} className="px-3 py-1.5 border border-line text-[11px] tracking-[.18em] uppercase hover:bg-ink hover:text-bg">Upload .html</button>
               </div>
@@ -122,7 +149,7 @@ function Drawer({ initial, onClose, onSaved }) {
 
         <div className="mt-8 flex justify-end gap-3">
           <button type="button" onClick={onClose} className="px-5 py-3 border border-line text-[12px] tracking-[.24em] uppercase">Cancel</button>
-          <button disabled={isSubmitting} className="px-5 py-3 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard">{isSubmitting ? 'Saving…' : 'Save →'}</button>
+          <button disabled={isSubmitting || overLimit} className="px-5 py-3 bg-saffron text-bg text-[12px] tracking-[.24em] uppercase hover:bg-mustard disabled:opacity-40 disabled:hover:bg-saffron">{isSubmitting ? 'Saving…' : 'Save →'}</button>
         </div>
       </form>
     </div>
