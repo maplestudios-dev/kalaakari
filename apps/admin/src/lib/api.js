@@ -27,10 +27,25 @@ export const auth = {
   changePassword: (currentPassword, newPassword) => api.post('/auth/change-password', { currentPassword, newPassword }).then((r) => r.data)
 }
 
+// Page markup is uploaded as multipart so it streams to disk on both ends —
+// a 50 MB document never becomes a JSON string in the browser or the API.
+// `html` may be a File (straight from the picker) or a string (textarea edit);
+// omit it entirely to change only the metadata.
+function pageForm({ html, ...fields }) {
+  const fd = new FormData()
+  for (const [k, v] of Object.entries(fields)) {
+    if (v !== undefined && v !== null) fd.append(k, String(v))
+  }
+  if (html instanceof File)        fd.append('html', html, html.name || 'page.html')
+  else if (typeof html === 'string') fd.append('html', new Blob([html], { type: 'text/html' }), 'page.html')
+  return fd
+}
+
 export const pages = {
   list:   () => api.get('/pages').then((r) => r.data.items),
-  create: (data) => api.post('/pages', data).then((r) => r.data.item),
-  update: (id, data) => api.put(`/pages/${id}`, data).then((r) => r.data.item),
+  get:    (id) => api.get(`/pages/id/${id}`).then((r) => r.data),
+  create: (data) => api.post('/pages', pageForm(data)).then((r) => r.data.item),
+  update: (id, data) => api.put(`/pages/${id}`, pageForm(data)).then((r) => r.data.item),
   remove: (id) => api.delete(`/pages/${id}`)
 }
 

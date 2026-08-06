@@ -16,7 +16,7 @@ import homepageRoutes from './routes/homepage.js'
 import categoryRoutes from './routes/categories.js'
 import recommendationRoutes from './routes/recommendations.js'
 import serviceRoutes from './routes/services.js'
-import pageRoutes, { PAGE_JSON_LIMIT } from './routes/pages.js'
+import pageRoutes from './routes/pages.js'
 import usersRoutes from './routes/users.js'
 import auditRoutes from './routes/audit.js'
 import siteCopyRoutes from './routes/siteCopy.js'
@@ -30,11 +30,8 @@ const app = express()
 
 app.set('trust proxy', 1)
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
-// Custom pages carry a whole HTML document, so they get a far larger body limit
-// than the rest of the API. Mounted first on purpose: express.json() no-ops once
-// req.body is set, so /api/pages uses this limit and every other route keeps 5mb
-// — public endpoints stay small.
-app.use('/api/pages', express.json({ limit: PAGE_JSON_LIMIT }))
+// Custom pages upload their markup as multipart straight to disk (see
+// routes/pages.js), so they need no JSON body allowance beyond the default.
 app.use(express.json({ limit: '5mb' }))    // larger limit for JSON copy uploads
 app.use(morgan('dev'))
 
@@ -70,6 +67,12 @@ app.use('/api/seo',          seoRoutes)
 app.use('/api/video',        videoRoutes)
 app.use('/api/media',        mediaRoutes)
 app.use('/api',              testimonialsRoutes)  // exposes /testimonials and /press
+
+// Custom-page markup lives under uploads/pages/ but must NOT be reachable
+// through the static mount below — that would serve drafts to anyone who
+// guessed the filename, bypassing the `published` check. Reads go through
+// GET /api/pages/:slug, which enforces it.
+app.use('/uploads/pages', (req, res) => res.status(404).json({ error: 'Not found', path: req.path }))
 
 // Static serving of uploaded media — /uploads/* → apps/api/uploads/*
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads'), {

@@ -12,7 +12,12 @@ export const errorHandler = (err, req, res, _next) => {
     })
   }
 
-  const status = err.status || (err.name === 'ValidationError' ? 422 : 500)
+  // Routes throughout the API signal intent with `res.status(409); throw ...`,
+  // which this handler used to discard — every one of those came back as a 500
+  // carrying the right message under the wrong code. Honour an already-set
+  // status before falling back.
+  const fromRes = res.statusCode >= 400 ? res.statusCode : 0
+  const status = err.status || fromRes || (err.name === 'ValidationError' ? 422 : 500)
   // eslint-disable-next-line no-console
   if (status >= 500) console.error(err)
   res.status(status).json({ error: err.message || 'Server error' })

@@ -20,7 +20,10 @@ module.exports = {
       instances:    1,
       autorestart:  true,
       watch:        false,
-      max_memory_restart: '400M',
+      // Page uploads stream to disk and are streamed back out, so RSS stays
+      // flat regardless of page size — this is headroom, not a working set.
+      // Changing it needs `pm2 delete` + `pm2 start`; a reload won't pick it up.
+      max_memory_restart: '600M',
       env: {
         NODE_ENV: 'production'
         // Real secrets come from apps/api/.env (loaded by dotenv inside src/index.js)

@@ -4,21 +4,31 @@ import axios from 'axios'
 
 /**
  * Renders a CMS-hosted custom HTML page (e.g. a proposal) at /<slug>.
- * The stored HTML is a full, standalone document, so it's rendered in a
- * full-viewport iframe (via srcDoc) — isolated from the site's styles/scripts
- * and covering the site chrome for a clean standalone page.
+ *
+ * The iframe points straight at the API endpoint rather than being handed a
+ * srcDoc string: the document streams in and renders progressively, so a large
+ * proposal starts appearing immediately instead of showing "Loading…" until the
+ * last byte lands. A HEAD request runs first so an unknown or unpublished slug
+ * still gets the site's own 404 rather than a broken frame.
+ *
+ * Because the frame's origin is the API host and not this site, the sandbox's
+ * allow-same-origin no longer grants the document access to this origin's
+ * storage the way it did when the markup was inlined via srcDoc.
  */
 export default function CustomPage() {
   const { slug } = useParams()
-  const [state, setState] = useState({ status: 'loading', html: '' })
+  const [state, setState] = useState({ status: 'loading', src: '' })
 
   useEffect(() => {
     const api = import.meta.env.VITE_API_URL
-    if (!api) { setState({ status: 'notfound' }); return }
-    setState({ status: 'loading' })
-    axios.get(`${api}/pages/${encodeURIComponent(slug)}`)
-      .then((r) => setState({ status: 'ok', html: r.data?.item?.html || '' }))
-      .catch(() => setState({ status: 'notfound' }))
+    if (!api) { setState({ status: 'notfound', src: '' }); return }
+    const src = `${api}/pages/${encodeURIComponent(slug)}`
+    setState({ status: 'loading', src: '' })
+    let cancelled = false
+    axios.head(src)
+      .then(() => !cancelled && setState({ status: 'ok', src }))
+      .catch(() => !cancelled && setState({ status: 'notfound', src: '' }))
+    return () => { cancelled = true }
   }, [slug])
 
   if (state.status === 'loading') {
@@ -39,7 +49,7 @@ export default function CustomPage() {
   return (
     <iframe
       title="Kalaakaari page"
-      srcDoc={state.html}
+      src={state.src}
       className="fixed inset-0 w-full h-full border-0 z-[200] bg-white"
       sandbox="allow-scripts allow-popups allow-forms allow-same-origin allow-downloads"
     />
