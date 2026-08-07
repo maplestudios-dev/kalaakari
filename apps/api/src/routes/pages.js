@@ -23,6 +23,20 @@ export const INLINE_EDIT_MAX_BYTES = 2 * 1024 * 1024
 
 const slugify = (s = '') => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
+/**
+ * Which origins may frame a custom page. Mirrors CORS_ORIGIN, which already
+ * lists the site and admin hosts; unset falls back to "any", matching how
+ * cors() is configured to behave in local development. Read per request rather
+ * than at import so it can't depend on dotenv having loaded first.
+ */
+let _frameAncestors = null
+function frameAncestors() {
+  if (_frameAncestors) return _frameAncestors
+  const origins = (process.env.CORS_ORIGIN || '').split(',').map((s) => s.trim()).filter(Boolean)
+  _frameAncestors = origins.length ? ["'self'", ...origins].join(' ') : '*'
+  return _frameAncestors
+}
+
 // Straight to disk — never through memory, which is the whole point of the move.
 const upload = multer({
   storage: multer.diskStorage({
@@ -94,6 +108,18 @@ r.get('/:slug', asyncHandler(async (req, res) => {
   if (!item) { res.status(404); throw new Error('Page not found') }
   const abs = resolvePagePath(item.htmlPath)
   if (!abs) { res.status(404); throw new Error('Page content is missing') }
+
+  // helmet puts X-Frame-Options: SAMEORIGIN and a restrictive CSP on every
+  // response. The public site frames this document across origins
+  // (kalaakaari.in embedding api.kalaakaari.in), so SAMEORIGIN blocks the frame
+  // outright, and the default script-src/img-src would strip inline scripts and
+  // external images out of the page once it did load. Replace both here: a CSP
+  // carrying only frame-ancestors leaves the document free to render itself
+  // while still controlling who may embed it. The iframe's sandbox attribute is
+  // what contains the markup.
+  res.removeHeader('X-Frame-Options')
+  res.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors()}`)
+
   // maxAge 0 + ETag: always revalidate, but a 304 when the page hasn't changed.
   res.sendFile(abs, { maxAge: 0, etag: true, lastModified: true }, (err) => {
     if (err && !res.headersSent) { res.status(404).json({ error: 'Page content is missing' }) }
